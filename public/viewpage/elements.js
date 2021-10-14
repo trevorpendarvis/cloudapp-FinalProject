@@ -1,3 +1,5 @@
+//ROOT Element
+export const root = document.getElementById('root');
 //top menu items
 export const menuSignIn = document.getElementById('menu-signIn');
 export const menuHome = document.getElementById('menu-home');
@@ -9,6 +11,9 @@ export const menuProfile = document.getElementById('menu-profile');
 
 //modals
 export const signInModal = new bootstrap.Modal(document.getElementById('modal-signIn'),{backdrop:'static'});
+export const infoModal = new bootstrap.Modal(document.getElementById('modal-info'),{backdrop:'static'});
+export const infoBody = document.getElementById('modal-info-body');
+export const infoTitle = document.getElementById('modal-info-title');
 
 //forms
 export const signInForm = document.getElementById('signIn-form');
