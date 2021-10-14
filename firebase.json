@@ -1,5 +1,6 @@
 {
   "hosting": {
+    "site": "a3p1trevorwilliampendarvis888",
     "public": "public",
     "ignore": [
       "firebase.json",
