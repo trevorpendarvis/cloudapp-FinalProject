@@ -100,15 +100,21 @@ export async function cart_page() {
     const checkout = document.getElementById('btn-checkout');
     checkout.addEventListener('click',async () => {
         const label = Util.disableButton(checkout);
-       // await Util.sleep(1000);
-        //save cart info as Purchase in firestore
-
-        Util.info('Successful','Check out complete');
-        window.localStorage.removeItem(`cart-${Auth.currentUser.uid}`);
-        cart.empty();
-        Elements.shoppingCartCount.innerHTML = '0';
-        history.pushState(null,null,Route.routePathnames.HOME);
-        await Home.home_page();
-        Util.enableButton(checkout,label);
+       try {
+           await FirebaseController.checkOut(cart);
+           Util.info('Successful','Check out complete');
+            window.localStorage.removeItem(`cart-${Auth.currentUser.uid}`);
+            cart.empty();
+            Elements.shoppingCartCount.innerHTML = '0';
+            history.pushState(null,null,Route.routePathnames.HOME);
+            await Home.home_page();
+           
+       } catch (e) {
+           if(Constant.DEV) console.log(e);
+           Util.info('Checkout error',JSON.stringify(e))
+       }
+       Util.enableButton(checkout,label);
+        
+        
     });
 }

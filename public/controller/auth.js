@@ -28,6 +28,11 @@ export function addEventListeners(){
         e.target.email.value = '';
         e.target.password.value = '';
         Util.enableButton(button,label);
+
+
+
+
+        
     });
 
 
@@ -78,5 +83,15 @@ export function addEventListeners(){
             history.pushState(null,null,Route.routePathnames.HOME);
             Route.routing(window.location.pathname,window.location.hash);
         }
+    });
+
+
+
+
+    Elements.signUpButton.addEventListener('click', () => {
+        Elements.signInModal.hide();
+        Elements.signUpForm.reset();
+        Elements.signUpFormPasswordError.innerHTML = '';
+        Elements.signUpModal.show();
     });
 }

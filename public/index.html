@@ -84,10 +84,62 @@
               </button>
             </div>
           </form>
+          <div>
+            <p>No account yet?</p>
+            <button id="signUpButton" class="btn btn-outline-info">Create an Account</button>
+          </div>
         </div>
       </div>
     </div>
   </div>
+
+
+
+  <!-- Modal: Sign Up -->
+<div class="modal fade" id="modal-sign-up" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel">Create an Account</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+          <form method="post" id="sign-up-form">
+              <div>
+                <input type="email" name="email" placeholder="Email Address" required>
+              </div>
+              <div>
+                <input type="password" name="password" placeholder="Password" required minlength="6">
+              </div>
+              <div>
+                <input type="password" name="passwordConfirm" placeholder="Confirm Password" required minlength="6">
+                <p id="sign-up-form-password-error" style="color: red;"></p>
+              </div>
+              <div>
+                <button class="btn btn-outline-success" type="submit">Create</button>
+              </div>
+          </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+  <!-- Modal: Purchase History details -->
+<div class="modal fade" id="modal-purchase-history-details" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="purchase-history-details-title" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="purchase-history-details-title"></h5>
+      </div>
+      <div class="modal-body" id="purchase-history-details-body">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 
   <!-- Modal: info box-->
