@@ -4,6 +4,7 @@ import * as Util from '../viewpage/util.js'
 import * as Constant from '../model/constant.js'
 import * as Route from './routes.js'
 import * as Home from '../viewpage/home_page.js'
+import * as Profile from '../viewpage/profile_page.js'
 
 
 export let currentUser;
@@ -53,6 +54,7 @@ export function addEventListeners(){
         if(user){
             currentUser = user;
 
+            await Profile.getAccountInfo(user);
             Home.initShoppingCart();
 
 
@@ -93,5 +95,30 @@ export function addEventListeners(){
         Elements.signUpForm.reset();
         Elements.signUpFormPasswordError.innerHTML = '';
         Elements.signUpModal.show();
+    });
+
+
+
+    Elements.signUpForm.addEventListener('submit', async e => {
+        e.preventDefault();
+        const email = e.target.email.value;
+        const password = e.target.password.value;
+        const confrimPassword = e.target.passwordConfirm.value;
+
+        Elements.signUpFormPasswordError.innerHTML = '';
+
+        if(password != confrimPassword){
+            Elements.signUpFormPasswordError.innerHTML = 'The passwords do not match';
+            return;
+        }
+
+        try {
+            await FirebaseController.createUser(email,password);
+            Util.info('Account created',`You are now signed in using ${email}`,Elements.signUpModal)
+        } catch (e) {
+            if(Constant.DEV) console.log(e);
+            Util.info('Failed to create an account',JSON.stringify(e), Elements.signUpModal);
+        }
+
     });
 }
