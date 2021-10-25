@@ -6,6 +6,7 @@ export class AccountInfo{
         this.city = data.city;
         this.zip = data.zip;
         this.creditNo = data.creditNo;
+        this.currentBalence = typeof data.currentBalence == 'number' ?  data.currentBalence : Number(data.currentBalence);
         this.photoURL = data.photoURL;
     }
 
@@ -17,6 +18,7 @@ export class AccountInfo{
             city: this.city,
             zip: this.zip,
             creditNo: this.creditNo,
+            currentBalence:this.currentBalence,
             photoURL: this.photoURL,
         };
     }
@@ -25,7 +27,7 @@ export class AccountInfo{
     static instance(){
         return new AccountInfo({
             name:'',  address:'', state:'',
-            city:'',zip:'', creditNo:'',
+            city:'',zip:'', creditNo:'',currentBalence:0.00,
             photoURL:'../assets/images/blank_profile.png',
         });
     }

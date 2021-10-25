@@ -8,6 +8,8 @@ export const menuSignOut = document.getElementById('menu-signOut');
 export const menuCart = document.getElementById('menu-cart');
 export const menuProfile = document.getElementById('menu-profile');
 export const shoppingCartCount = document.getElementById('shoppingcart-count');
+export const menuWallet = document.getElementById('menu-wallet');
+export const walletAmount = document.getElementById('wallet-amount');
 
 
 //modals
@@ -19,11 +21,13 @@ export const purchaseHistoryDetailsModal = new bootstrap.Modal(document.getEleme
 export const purchaseHistoryDetailsTitle = document.getElementById('purchase-history-details-title');
 export const purchaseHistoryDetailsBody = document.getElementById('purchase-history-details-body');
 export const signUpModal = new bootstrap.Modal(document.getElementById('modal-sign-up'),{backdrop:'static'});
+export const addFundsModal = new bootstrap.Modal(document.getElementById('modal-add-funds'),{backdrop:'static'});
 
 //forms
 export const signInForm = document.getElementById('signIn-form');
 export const signUpForm = document.getElementById('sign-up-form');
 export const signUpFormPasswordError = document.getElementById('sign-up-form-password-error');
+export const addFundsForm = document.getElementById('form-add-funds');
 
 
 export const signUpButton = document.getElementById('signUpButton');

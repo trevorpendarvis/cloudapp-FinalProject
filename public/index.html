@@ -49,6 +49,9 @@
             </button>
           </li>
         </ul>
+        <button id="menu-wallet" class="btn btn-outline-success modal-post-auth">
+          <img src="assets/images/wallet.png" width="30px">(<span id="wallet-amount">0.00</span>) 
+        </button>
         <button id="menu-cart" class="btn btn-outline-success modal-post-auth">
           <img src="assets/images/shoppingCart.jpg" width="30px">(<span id="shoppingcart-count">0</span>) 
         </button>
@@ -119,6 +122,30 @@
                 <button class="btn btn-outline-success" type="submit">Create</button>
               </div>
           </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- Modal:Add funds -->
+<div class="modal fade" id="modal-add-funds" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel">Add funds</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form method="post" id="form-add-funds">
+          <div>
+            <input type="text" name="amount" placeholder="Enter amount $1000.00" required pattern="[0-9][0-9|.]+" minlength="1">
+          </div>
+          <div style="text-align: center;">
+            <button type="submit" class="btn btn-outline-primary">Add funds</button>
+          </div>
+        </form>
       </div>
     </div>
   </div>

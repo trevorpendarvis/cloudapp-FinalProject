@@ -4,8 +4,9 @@ import * as Constant from '../model/constant.js'
 import * as FirebaseController from '../controller/firebase_controller.js'
 import * as Route from '../controller/routes.js'
 import * as Auth from '../controller/auth.js'
+import * as Wallet from './wallet.js'
 
-let accountInfo;
+export let accountInfo;
 export function addEventListeners(){
     Elements.menuProfile.addEventListener('click', async () => {
         history.pushState(null,null,Route.routePathnames.PROFILE);
@@ -156,6 +157,23 @@ export async function profile_page(){
     html += `
         <table class="table table-sm">
             <tr>
+                <td width="15%">Current Balence:</td>
+                    <td width="60%">
+                        <input id="profile-add-funds-value" type="text" name="creditNo" value="${Util.currency(accountInfo.currentBalence)}"
+                        placeholder="$0.00" disabled required
+                        pattern="[0-9][0-9|.]"
+                        minlength="1" 
+                        >
+                    </td>
+                <td><button id="profile-add-funds" class="btn btn-outline-primary">Add funds</button></td>
+            </tr>
+        </table>
+
+    `;
+
+    html += `
+        <table class="table table-sm">
+            <tr>
                 <td>
                     <input type="file" id="profile-photo-upload-button" value="upload">
                 </td>
@@ -171,6 +189,11 @@ export async function profile_page(){
 
 
     Elements.root.innerHTML = html;
+
+
+    document.getElementById('profile-add-funds').addEventListener('click',async ()=>{
+        Wallet.profileAddfunds();
+    });
 
 
     const updatePhotoButton = document.getElementById('profile-photo-update-button');
@@ -285,8 +308,16 @@ export async function getAccountInfo(user){
         accountInfo = null;
         return;
     }
+
+    Elements.walletAmount.innerHTML = Util.currency(accountInfo.currentBalence);
     
     Elements.menuProfile.innerHTML = `
             <img src="${accountInfo.photoURL}" class="rounded-circle" height="30px">
     `;
+}
+
+
+export async function updateAccountBalence(balence){
+    accountInfo.currentBalence = balence;
+    document.getElementById('profile-add-funds-value').value = Util.currency(accountInfo.currentBalence);
 }

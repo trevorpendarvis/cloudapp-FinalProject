@@ -4,12 +4,14 @@ import * as Cart from './viewpage/cart.js'
 import * as Profile from './viewpage/profile_page.js'
 import * as Purchases from './viewpage/purchases_page.js'
 import * as Route from './controller/routes.js'
+import * as Wallet from './viewpage/wallet.js'
 
 Auth.addEventListeners();
 Home.addEventListeners();
 Cart.addEventListeners();
 Profile.addEventListeners();
 Purchases.addEventListeners();
+Wallet.addEventListeners();
 
 
 window.onload = () => {
