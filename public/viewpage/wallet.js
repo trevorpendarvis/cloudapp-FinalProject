@@ -26,7 +26,7 @@ export function addEventListeners(){
         let newAmount = addAmount+currentAmount;
         try {
             const updateInfo = {};
-            updateInfo['currentBalence'] = newAmount;
+            updateInfo['currentBalence'] = newAmount.toFixed(2);
             await FirebaseController.updateAccount(Auth.currentUser.uid,updateInfo);
             Util.info('Success!',`${Util.currency(addAmount)} added to your account`,Elements.addFundsModal);
             Elements.walletAmount.innerHTML = Util.currency(newAmount);

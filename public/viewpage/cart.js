@@ -5,6 +5,7 @@ import * as FirebaseController from '../controller/firebase_controller.js'
 import * as Route from '../controller/routes.js'
 import * as Auth from '../controller/auth.js'
 import * as Home from './home_page.js'
+import * as Profile from './profile_page.js'
 
 
 export function addEventListeners() {
@@ -99,10 +100,31 @@ export async function cart_page() {
 
     const checkout = document.getElementById('btn-checkout');
     checkout.addEventListener('click',async () => {
+        const currentBalence = Profile.accountInfo.currentBalence;
+        const totalPrice = cart.getTotalPrice();
+        if(!Profile.checkPaymentMethod()){
+            Util.info('Sorry looks like you dont have a payment method','To add a payment method go to profile and enter a valid credit card.');
+            return;
+        }else if(!Profile.checkFunds(totalPrice)){
+            Util.info('Insufficient funds',`You only have ${Util.currency(currentBalence)} in your wallet, you need to add ${Util.currency(totalPrice-currentBalence)} if you want to checkout`);
+            return;
+        }
+
+        
+
+        const updateInfo = {};
+        const newBalence = currentBalence - totalPrice;
+        updateInfo['currentBalence'] = newBalence;
+        
+
+
+
         const label = Util.disableButton(checkout);
        try {
-           await FirebaseController.checkOut(cart);
-           Util.info('Successful','Check out complete');
+            await FirebaseController.updateAccount(Auth.currentUser.uid,updateInfo);
+            Profile.updateAfterPurchase(newBalence);
+            await FirebaseController.checkOut(cart);
+            Util.info('Successful',`Check out complete, your current balence is now ${Util.currency(newBalence)}`);
             window.localStorage.removeItem(`cart-${Auth.currentUser.uid}`);
             cart.empty();
             Elements.shoppingCartCount.innerHTML = '0';

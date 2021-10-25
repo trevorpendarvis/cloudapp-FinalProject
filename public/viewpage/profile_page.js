@@ -316,8 +316,31 @@ export async function getAccountInfo(user){
     `;
 }
 
+export function checkPaymentMethod(){
+    if(!accountInfo || !accountInfo.creditNo){
+        return false;
+    }else{
+        return true;
+    }
+}
+
+
+
+export function checkFunds(price){
+    if(accountInfo.currentBalence < price){
+        return false;
+    }else{
+        return true;
+    }
+}
 
 export async function updateAccountBalence(balence){
     accountInfo.currentBalence = balence;
     document.getElementById('profile-add-funds-value').value = Util.currency(accountInfo.currentBalence);
+}
+
+
+export function updateAfterPurchase(newBalence){
+    accountInfo.currentBalence = newBalence;
+    Elements.walletAmount.innerHTML = Util.currency(newBalence);
 }
