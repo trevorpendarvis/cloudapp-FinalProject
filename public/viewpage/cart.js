@@ -113,7 +113,8 @@ export async function cart_page() {
         
 
         const updateInfo = {};
-        const newBalence = currentBalence - totalPrice;
+        let newBalence = currentBalence - totalPrice;
+        newBalence = Number(newBalence.toFixed(2));        
         updateInfo['currentBalence'] = newBalence;
         
 
