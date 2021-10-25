@@ -24,6 +24,8 @@ export function addEventListeners(){
         const addAmount = Number(e.target.amount.value);
         const currentAmount = Profile.accountInfo.currentBalence;
         let newAmount = addAmount+currentAmount;
+        const button = e.target.getElementsByTagName('button')[0];
+        const label = Util.disableButton(button);
         try {
             const updateInfo = {};
             updateInfo['currentBalence'] = Number(newAmount.toFixed(2));
@@ -33,7 +35,10 @@ export function addEventListeners(){
         } catch (e) {
             if(Constant.DEV) console.log(e);
             Util.info('add funds error',JSON.stringify(e),Elements.addFundsModal);
+            Util.enableButton(button,label);
+            return;
         }
+        Util.enableButton(button,label);
         await Profile.updateAccountBalence(newAmount);
     });
 }
