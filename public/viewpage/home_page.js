@@ -7,6 +7,7 @@ import * as Auth from '../controller/auth.js'
 import { ShoppingCart } from '../model/ShoppingCart.js'
 
 
+
 export function addEventListeners(){
     Elements.menuHome.addEventListener('click', async () => {
         history.pushState(null,null,Route.routePathnames.HOME);
@@ -20,7 +21,12 @@ export function addEventListeners(){
 export let cart;
 
 
+
+
 export async function home_page(){
+
+    
+
     let html = `<div text-align: center;><h1>Enjoy Shopping</h1></div>`;
 
     let products;
@@ -85,7 +91,7 @@ function buildProductCard(product,index) {
         <p class="card-text"><b>Price: ${Util.currency(product.price)}</b></p>
         <hr style="border-top: 3px solid #AAA;">
         <p class="card-text"><b>Description: ${product.summary}</b></p>
-        <div class="container pt-3 bg-light ${Auth.currentUser ? 'd-block' : 'd-none'}">
+        <div class="container pt-3 bg-light ${Auth.currentUser && !Constant.adminEmails.includes(Auth.currentUser.email)  ? 'd-block' : 'd-none'}">
             <form method="post" class="d-inline form-dec-qty">
                 <input type="hidden" name="index" value="${index}">
                 <button class="btn btn-outline-danger" type="submit">&minus;</button>

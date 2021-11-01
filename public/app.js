@@ -5,6 +5,9 @@ import * as Profile from './viewpage/profile_page.js'
 import * as Purchases from './viewpage/purchases_page.js'
 import * as Route from './controller/routes.js'
 import * as Wallet from './viewpage/wallet.js'
+import * as Product from './viewpage/products_page.js'
+import * as User from './viewpage/users_page.js'
+import * as AdminHome from './viewpage/admin_home_page.js'
 
 Auth.addEventListeners();
 Home.addEventListeners();
@@ -12,6 +15,10 @@ Cart.addEventListeners();
 Profile.addEventListeners();
 Purchases.addEventListeners();
 Wallet.addEventListeners();
+Product.addEventListeners();
+User.addEventListeners();
+AdminHome.addEventListeners();
+
 
 
 window.onload = () => {

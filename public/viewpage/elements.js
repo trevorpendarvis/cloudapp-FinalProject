@@ -10,6 +10,11 @@ export const menuProfile = document.getElementById('menu-profile');
 export const shoppingCartCount = document.getElementById('shoppingcart-count');
 export const menuWallet = document.getElementById('menu-wallet');
 export const walletAmount = document.getElementById('wallet-amount');
+export const menuProducts = document.getElementById('menu-products');
+export const menuUsers = document.getElementById('menu-users');
+export const bannerTitle = document.getElementById('banner-title');
+export const menuAdminHome = document.getElementById('menu-home-admin');
+
 
 
 //modals
@@ -31,3 +36,33 @@ export const addFundsForm = document.getElementById('form-add-funds');
 
 
 export const signUpButton = document.getElementById('signUpButton');
+
+
+
+
+//AdminForms
+export const addProductForm = {
+    form: document.getElementById('form-add-product'),
+    imageTag: document.getElementById('form-add-product-image-tag'),
+    imageButton: document.getElementById('form-add-product-image-button'),
+    errorName: document.getElementById('form-add-product-error-name'),
+    errorPrice: document.getElementById('form-add-product-error-price'),
+    errorSummary: document.getElementById('form-add-product-error-summary'),
+    errorImage: document.getElementById('form-add-product-error-image'),
+    
+}
+
+export const editProductForm = {
+    form: document.getElementById('form-edit-product'),
+    imageTag: document.getElementById('form-edit-product-image-tag'),
+    imageButton: document.getElementById('form-edit-product-image-button'),
+    errorName: document.getElementById('form-edit-product-error-name'),
+    errorPrice: document.getElementById('form-edit-product-error-price'),
+    errorSummary: document.getElementById('form-edit-product-error-summary'),
+    errorImage: document.getElementById('form-edit-product-error-image'),
+}
+
+//Admin modals
+export const modalAddProduct = new bootstrap.Modal(document.getElementById('modal-add-product'), {backdrop: 'static'});
+
+export const modalEditProduct = new bootstrap.Modal(document.getElementById('modal-edit-product'), {backdrop: 'static'});

@@ -11,3 +11,8 @@ export const storageFolderNames = {
     PROFILE_PHOTOS: 'profile_photos/',
     
 };
+
+export const adminEmails = [
+    'super@test.com',
+    'admin@test.com',
+];

@@ -85,3 +85,85 @@ export async function uploadProfilePhoto(photoFile,imageName){
     return photoURL;
             
 }
+
+
+const cf_addProducts = firebase.functions().httpsCallable('cf_addProducts');
+export async function addProduct(product){
+    await cf_addProducts(product);
+}
+
+export async function uploadImage(imageFile,imageName){
+    if(!imageName)
+    imageName = Date.now() + imageFile.name;
+
+    const ref = firebase.storage().ref()
+                .child(Constant.storageFolderNames.PRODUCT_IMAGES + imageName);
+
+    const taskSnapShot = await ref.put(imageFile);
+    const imageURL = await taskSnapShot.ref.getDownloadURL();
+
+    return {imageURL,imageName};
+}
+
+
+const cf_getProductList = firebase.functions().httpsCallable('cf_getProductList');
+export async function getProductList(){
+    let productList = [];
+    const results = await cf_getProductList(); //results.data
+    results.data.forEach(data => {
+        const p = new Product(data);
+        p.docId = data.docId;
+        productList.push(p);
+    });
+    return productList;
+}
+
+
+const cf_getProductById = firebase.functions().httpsCallable('cf_getProductById');
+export async function getProductById(docId){
+    const results = await cf_getProductById(docId);
+
+    if(results.data){
+        const product = new Product(results.data);
+        product.docId = results.data.docId;
+        return product;
+    }else{
+        return null;
+    }
+}
+
+const cf_updateProduct = firebase.functions().httpsCallable('cf_updateProduct');
+export async function updateProduct(product){
+    const docId = product.docId;
+    const data = product.serializeForUpdate();
+    await cf_updateProduct({docId,data});
+}
+
+const cf_deleteProduct = firebase.functions().httpsCallable('cf_deleteProduct');
+export async function deleteProduct(docId,imageName){
+    await cf_deleteProduct(docId);
+
+    //getting reference to the image
+    const ref = firebase.storage().ref()
+                .child(Constant.storageFolderNames.PRODUCT_IMAGES+imageName);
+
+    // removing image
+    await ref.delete();
+}
+
+const cf_getUsersList = firebase.functions().httpsCallable('cf_getUsersList');
+export async function getUsersList(){
+    const results = await cf_getUsersList();
+    return results.data;
+}
+
+
+const cf_updateUser = firebase.functions().httpsCallable('cf_updateUser');
+export async function updateUser(uid,update){
+    await cf_updateUser({uid,update});
+}
+
+const cf_deleteUser = firebase.functions().httpsCallable('cf_deleteUser');
+export async function deleteUser(uid){
+    await cf_deleteUser(uid);
+}
