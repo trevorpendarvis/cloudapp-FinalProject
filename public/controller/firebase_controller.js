@@ -167,3 +167,36 @@ const cf_deleteUser = firebase.functions().httpsCallable('cf_deleteUser');
 export async function deleteUser(uid){
     await cf_deleteUser(uid);
 }
+
+
+
+export async function getProductInfo(docId){
+    const result = await firebase.firestore().collection(Constant.collectionName.PRODUCT)
+                    .doc(docId)
+                    .get();
+    if(result){
+        const p = new Product(result.data());
+        p.docId = result.data.docId;
+        return p;
+    }else{
+        return null;
+    }
+     
+}
+
+
+export async function addReply(reply){
+   const ref =  await firebase.firestore().collection(Constant.collectionName.REPLIES)
+                    .add(reply);
+
+    return ref.id;
+}
+
+
+export async function getAllReplies(docId){
+    const snapShot = firebase.firestore().collection(Constant.collectionName.REPLIES)
+                    .where('productId','==',docId)
+                    .orderBy('timestamp','desc')
+                    .get();
+    
+}

@@ -4,7 +4,7 @@ import * as Constant from '../model/constant.js'
 import * as FirebaseController from '../controller/firebase_controller.js'
 import * as Route from '../controller/routes.js'
 import * as Auth from '../controller/auth.js'
-
+export let cartHistory;
 
 export function addEventListeners(){
     Elements.menuPurchases.addEventListener('click', async () => {
@@ -23,7 +23,7 @@ export async function purchases_page(){
     }
     let html = '<h1>Purchases Page</h1>';
 
-    let cartHistory;
+    
     try {
         cartHistory = await FirebaseController.getPurchaseHistory(Auth.currentUser.uid);
         if(cartHistory.length == 0){

@@ -4,6 +4,7 @@ export const collectionName = {
     PRODUCT: 'products',
     PURCHASE_HISTORY: 'purchase_history',
     ACCOUNT_INFO: 'account_info',
+    REPLIES: 'replies',
 };
 
 export const storageFolderNames = {

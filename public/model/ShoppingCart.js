@@ -104,4 +104,16 @@ export class ShoppingCart{
     empty(){
         this.items.length = 0;
     }
+
+
+    hasPurchased(docId){
+        let purchased = false;
+        this.items.forEach(product => {
+            if(product.docId == docId){
+                purchased = true;
+            }
+        });
+
+        return purchased;
+    }
 }

@@ -5,6 +5,7 @@ import * as FirebaseController from '../controller/firebase_controller.js'
 import * as Route from '../controller/routes.js'
 import * as Auth from '../controller/auth.js'
 import { ShoppingCart } from '../model/ShoppingCart.js'
+import * as DetailView from './details_product_page.js'
 
 
 
@@ -27,7 +28,7 @@ export async function home_page(){
 
     
 
-    let html = `<div text-align: center;><h1>Enjoy Shopping</h1></div>`;
+    let html = `<div style="text-align: center;"><h1>Enjoy Shopping</h1></div>`;
 
     let products;
     try {
@@ -49,6 +50,14 @@ export async function home_page(){
     }
 
     Elements.root.innerHTML = html;
+
+
+
+    
+
+
+
+
 
     const formDec = document.getElementsByClassName('form-dec-qty');
     for(let i = 0; i < formDec.length; i++){
@@ -73,6 +82,19 @@ export async function home_page(){
             Elements.shoppingCartCount.innerHTML = cart.getTotalCount();
         });
     }
+
+    
+
+    const viewDeatailsForms = document.getElementsByClassName('form-view-product-details');
+    for(let i = 0; i < viewDeatailsForms.length; i++){
+        viewDeatailsForms[i].addEventListener('submit',async e => {
+            e.preventDefault();
+            const docId = e.target.docId.value;
+            DetailView.detailProductViewPage(docId);   
+        });
+    }
+
+
 }
 
 
@@ -84,14 +106,20 @@ function buildProductCard(product,index) {
       
       <img src="${product.imageURL}" class="card-img-top" style="width:100%; height: 15vw; object-fit: contain; border-radius: 10px;">
       
-      <hr style="border-top:  solid #AAA; border-radius: 5px; rounded">
+      <hr style="border-top:  solid #374045; border-radius: 5px; rounded">
       <div class="card-body">
         <h5 class="card-title">Name: ${product.name}</h5>
-        <hr style="border-top: 3px solid #AAA;">
+        <hr style="border-top: 3px solid #374045;">
         <p class="card-text"><b>Price: ${Util.currency(product.price)}</b></p>
-        <hr style="border-top: 3px solid #AAA;">
+        <hr style="border-top: 3px solid #374045;">
         <p class="card-text"><b>Description: ${product.summary}</b></p>
-        <div class="container pt-3 bg-light ${Auth.currentUser && !Constant.adminEmails.includes(Auth.currentUser.email)  ? 'd-block' : 'd-none'}">
+        <hr style="border-top: 3px solid #374045;">
+        <div class="container pt-3 bg-light ${Auth.currentUser && !Constant.adminEmails.includes(Auth.currentUser.email)  ? 'd-block' : 'd-none'}" style="text-align: center;">
+            <form method="post" class="form-view-product-details">
+                <input type="hidden" name="docId" value="${product.docId}">
+                <button type="submit" class="btn btn-outline-primary">View details</button>
+            </form>
+            <hr style="border-top: 3px solid #374045;">
             <form method="post" class="d-inline form-dec-qty">
                 <input type="hidden" name="index" value="${index}">
                 <button class="btn btn-outline-danger" type="submit">&minus;</button>
