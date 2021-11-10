@@ -137,32 +137,37 @@
 </div>
 
 
+  
+  
 
-<!-- Modal:Add funds -->
-<div class="modal fade" id="modal-add-funds" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="staticBackdropLabel">Add funds</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <form method="post" id="form-add-funds">
-          <div>
-            <input type="text" name="amount" placeholder="Enter amount $1000.00" required pattern="[0-9][0-9|.]+" minlength="1">
-          </div>
-          <div style="text-align: center;">
-            <button type="submit" class="btn btn-outline-primary">Add funds</button>
-          </div>
-        </form>
+
+
+
+  <!-- Modal:Add funds -->
+  <div class="modal fade" id="modal-add-funds" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="staticBackdropLabel">Add funds</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form method="post" id="form-add-funds">
+            <div>
+              <input type="text" name="amount" placeholder="Enter amount $1000.00" required pattern="[0-9][0-9|.]+" minlength="1">
+            </div>
+            <div style="text-align: center;">
+              <button type="submit" class="btn btn-outline-primary">Add funds</button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   </div>
-</div>
 
 
   <!-- Modal: Purchase History details -->
-<div class="modal fade" id="modal-purchase-history-details" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="purchase-history-details-title" aria-hidden="true">
+  <div class="modal fade" id="modal-purchase-history-details" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="purchase-history-details-title" aria-hidden="true">
   <div class="modal-dialog modal-dialog-scrollable modal-lg">
     <div class="modal-content">
       <div class="modal-header">
@@ -175,13 +180,13 @@
       </div>
     </div>
   </div>
-</div>
+  </div>
 
 
-<!-- Modal Add new product-->
-<div class="modal fade" id="modal-add-product" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-aria-labelledby="staticBackdropLabel" aria-hidden="true">
-<div class="modal-dialog">
+  <!-- Modal Add new product-->
+  <div class="modal fade" id="modal-add-product" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+  aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
   <div class="modal-content">
     <div class="modal-header">
       <h5 class="modal-title" id="staticBackdropLabel">Add Product</h5>
@@ -213,12 +218,12 @@ aria-labelledby="staticBackdropLabel" aria-hidden="true">
       </form>
     </div>
   </div>
-</div>
-</div>
+  </div>
+  </div>
 
 
-<!-- Modal Edit Product -->
-<div class="modal fade" id="modal-edit-product" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modal-edit-product-title" aria-hidden="true">
+  <!-- Modal Edit Product -->
+  <div class="modal fade" id="modal-edit-product" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modal-edit-product-title" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -253,7 +258,31 @@ aria-labelledby="staticBackdropLabel" aria-hidden="true">
       </div>
     </div>
   </div>
-</div>
+  </div>
+
+
+
+  <!-- Modal: Edit Review -->
+  <div class="modal fade" id="modal-edit-review" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modal-edit-review-title" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modal-edit-review-title">Edit review message</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="form-edit-review" method="post">
+            <input type="hidden" name="docId">
+            <div>
+              <textarea name="content" rows="10" style="width: 100%;"></textarea>
+            </div>
+            <div>
+              <button type="submit" class="btn btn-outline-success">Update</button>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
 
 

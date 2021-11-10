@@ -8,6 +8,8 @@ import * as Wallet from './viewpage/wallet.js'
 import * as Product from './viewpage/products_page.js'
 import * as User from './viewpage/users_page.js'
 import * as AdminHome from './viewpage/admin_home_page.js'
+import * as Edit from './controller/edit_products.js'
+import * as EditReview from './controller/edit_reviews.js'
 
 Auth.addEventListeners();
 Home.addEventListeners();
@@ -18,6 +20,8 @@ Wallet.addEventListeners();
 Product.addEventListeners();
 User.addEventListeners();
 AdminHome.addEventListeners();
+Edit.addEventListeners();
+EditReview.addEventListeners();
 
 
 

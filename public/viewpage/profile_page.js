@@ -153,7 +153,7 @@ export async function profile_page(){
                 </table>
             </form>
     `;
-
+    /*
     html += `
         <table class="table table-sm">
             <tr>
@@ -170,6 +170,7 @@ export async function profile_page(){
         </table>
 
     `;
+    */
 
     html += `
         <table class="table table-sm">
@@ -191,9 +192,9 @@ export async function profile_page(){
     Elements.root.innerHTML = html;
 
 
-    document.getElementById('profile-add-funds').addEventListener('click',async ()=>{
+    /*document.getElementById('profile-add-funds').addEventListener('click',async ()=>{
         Wallet.profileAddfunds();
-    });
+    });*/
 
 
     const updatePhotoButton = document.getElementById('profile-photo-update-button');
@@ -336,7 +337,7 @@ export function checkFunds(price){
 
 export async function updateAccountBalence(balence){
     accountInfo.currentBalence = balence;
-    document.getElementById('profile-add-funds-value').value = Util.currency(accountInfo.currentBalence);
+    //document.getElementById('profile-add-funds-value').value = Util.currency(accountInfo.currentBalence);
 }
 
 

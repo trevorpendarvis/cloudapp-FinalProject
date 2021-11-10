@@ -1,6 +1,7 @@
 import { AccountInfo } from '../model/AccountInfo.js';
 import * as Constant from '../model/constant.js'
 import { Product } from '../model/Products.js';
+import { Reply } from '../model/Reply.js';
 import { ShoppingCart } from '../model/ShoppingCart.js';
 
 export async function signIn(email,password){
@@ -193,10 +194,46 @@ export async function addReply(reply){
 }
 
 
-export async function getAllReplies(docId){
-    const snapShot = firebase.firestore().collection(Constant.collectionName.REPLIES)
+export async function getRepliesList(docId){
+    const snapShot = await firebase.firestore().collection(Constant.collectionName.REPLIES)
                     .where('productId','==',docId)
                     .orderBy('timestamp','desc')
                     .get();
+
+        let replyList = [];
+        snapShot.forEach(r => {
+            const reply = new Reply(r.data());
+            reply.docId = r.id;
+            replyList.push(reply);
+        });
+
+        return replyList;
     
+}
+
+
+
+export async function getReviewById(docId){
+    const doc = await firebase.firestore().collection(Constant.collectionName.REPLIES)
+                        .doc(docId)
+                        .get();
+        if(doc){
+            const reply = new Reply(doc.data());
+            reply.docId = doc.id;
+            return reply;
+        }else{
+            return null;
+        }
+}
+
+
+export async function updateReview(reply){
+    await firebase.firestore().collection(Constant.collectionName.REPLIES)
+                    .doc(reply.docId)
+                    .update(reply);
+    
+}
+
+export async function deleteReview(docId){
+    await firebase.firestore().collection(Constant.collectionName.REPLIES).doc(docId).delete();
 }

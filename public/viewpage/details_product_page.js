@@ -5,6 +5,7 @@ import * as FirebaseController from '../controller/firebase_controller.js'
 import * as Route from '../controller/routes.js'
 import * as Auth from '../controller/auth.js'
 import { Reply } from '../model/Reply.js'
+import * as Edit from '../controller/edit_reviews.js';
 
 
 export async function detailProductViewPage(docId){
@@ -26,10 +27,11 @@ export async function detailProductPage(docId){
 
     let html = `<div style="text-align: center;"><h1 style="margin-bottom: 15px;">Details</h1>`;
 
-    let replies = [];
+    let replyList = [];
     let productDetail;
     try {
         productDetail = await FirebaseController.getProductInfo(docId);
+        replyList = await FirebaseController.getRepliesList(docId);
     } catch (e) {
         if(Constant.DEV) console.log(e)
         Util.info('Error could not retrieve info of product',JSON.stringify(e));
@@ -50,14 +52,32 @@ export async function detailProductPage(docId){
             <img src="${productDetail.imageURL}" width="350px">
             </td>
         </tr>
+        
     `;
 
+        
 
-     replay.forEach(info => {
-         html += buildCard(info);
-     });
-
-     html += '</tbody></table>';
+            if(replyList.length > 0){
+            replyList.forEach(r => {
+                html += buildCard(r);
+            });
+        }else{
+            html += `
+            <tr>
+            <td> 
+             <div class="card text-center border border-primary" style="background-color: #393E46;">
+                 <div class="card-header text-white bg-info">
+                 </div>
+                 <div class="card-body">
+                     <h3><b>No Reviews</b></h3>
+                 </div>
+             </div>
+             </td>
+             </tr>
+         
+         `;
+        }
+        html += '</tbody></table>';
 
 
     
@@ -67,9 +87,7 @@ export async function detailProductPage(docId){
      let hasPurchased = false;
      try {
          cartHistory = await FirebaseController.getPurchaseHistory(Auth.currentUser.uid);
-        if(!cartHistory || cartHistory.length == 0){
-            return;
-        }
+        
         
         for(let i = 0; i < cartHistory.length; i++){
             if(cartHistory[i].hasPurchased(docId)){
@@ -90,17 +108,37 @@ export async function detailProductPage(docId){
 
         html += `
                     <div class="${hasPurchased ? 'd-block' : 'd-none'}">
-                    <form method="post" id="post-reply-form">
-                    <input type="hidden" name="docId" value="${docId}">
-                    <div style="text-align: center;"><textarea id="textarea-add-reply" placeholder="Add a review"cols="50" rows="5" style="width: 100%;"></textarea></div>
-                    <div style="text-align: center;">
-                        <button type="submit" class="btn btn-outline-info">Commit</button>
-                    </div>
-                    </form>
+                            <form method="post" id="post-reply-form">
+                                <input type="hidden" name="docId" value="${docId}">
+                                <div style="text-align: center;"><textarea id="textarea-add-reply" placeholder="Add a review" rows="5" style="width: 100%;"></textarea></div>
+                                <div style="text-align: center;">
+                                <button type="submit" class="btn btn-outline-info">Commit</button>
+                                </div>
+                            </form>
                     </div>
             `;
 
      Elements.root.innerHTML = html;
+
+
+     const editReviewForms = document.getElementsByClassName('edit-review-form');
+     for(let i = 0; i < editReviewForms.length; i++){
+         editReviewForms[i].addEventListener('submit', async e => {
+             e.preventDefault();
+             await Edit.editReview(e.target.docId.value);
+         });
+     }
+
+     const deleteReviewForms = document.getElementsByClassName('delete-review-form');
+     for(let i = 0; i < deleteReviewForms.length; i++){
+        deleteReviewForms[i].addEventListener('submit', async e => {
+            e.preventDefault();
+            await Edit.deleteReview(e.target.docId.value);
+        });
+     }
+     
+
+
 
      document.getElementById('post-reply-form').addEventListener('submit',async e=> {
          e.preventDefault();
@@ -114,14 +152,27 @@ export async function detailProductPage(docId){
         );
         try {
            const replyId = await FirebaseController.addReply(reply.serialize());
-           reply.docId = replyId; 
+           reply.docId = replyId;
+           replyList.push(reply);
            Util.info('Success!','Review uploaded');
            document.getElementById('textarea-add-reply').value = '';
+           detailProductPage(docId);
+           
+           
+
             
         } catch (e) {
             if(Constant.DEV) console.log(e);
             Util.info('Error could not post review',JSON.stringify(e));
         }
+
+
+
+
+
+
+
+
      });
 
 
@@ -135,23 +186,29 @@ export async function detailProductPage(docId){
 
 
 
-function buildCard(info){
+function buildCard(reply){
     return `
-        <tr>
-        <td>
+       <tr id="entry-${reply.docId}">
+       <td> 
         <div class="card text-center border border-primary" style="background-color: #393E46;">
             <div class="card-header text-white bg-info">
-                <b>Replied by:John Smith</b>
+                <h4>${reply.email}</h4>
             </div>
             <div class="card-body">
-                <p>${info}</p>
+                <h3 id="content-${reply.docId}"><b>${reply.content}</b></h3>
             </div>
-            <div>
+            <div class="${reply.uid == Auth.currentUser.uid ? 'd-block' : 'd-none'}">
+                <form method="post" class="edit-review-form d-inline">
+                <input type="hidden" name="docId" value="${reply.docId}">
                 <button class="btn btn-outline-info d-inline">Edit Reply</button>
+                </form>
+                <form method="post" class="delete-review-form d-inline">
+                <input type="hidden" name="docId" value="${reply.docId}">
                 <button class="btn btn-outline-info d-inline">Delete Reply</button>
-            <div>
-            <div class="card-footer text-muted">
-                11/7/2021
+                </form>
+            </div>
+            <div class="card-footer text-muted" id="timeStamp-${reply.docId}">
+                ${new Date(reply.timestamp).toString()}
             </div>
         </div>
         </td>
