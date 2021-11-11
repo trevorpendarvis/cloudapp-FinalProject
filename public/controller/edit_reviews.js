@@ -70,6 +70,7 @@ export async function editReview(docId){
 
 
 export async function deleteReview(docId){
+    if(!window.confirm('Are you sure you want to delete this review?')) return;
     try {
         await FirebaseController.deleteReview(docId);
         document.getElementById(`entry-${docId}`).remove();

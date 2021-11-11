@@ -90,7 +90,10 @@ export async function home_page(){
         viewDeatailsForms[i].addEventListener('submit',async e => {
             e.preventDefault();
             const docId = e.target.docId.value;
-            DetailView.detailProductViewPage(docId);   
+            const button = e.target.getElementsByTagName('button')[0];
+            const label = Util.disableButton(button);
+           await DetailView.detailProductViewPage(docId);
+           Util.enableButton(button,label);   
         });
     }
 

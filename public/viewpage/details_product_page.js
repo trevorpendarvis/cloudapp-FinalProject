@@ -110,9 +110,9 @@ export async function detailProductPage(docId){
                     <div class="${hasPurchased ? 'd-block' : 'd-none'}">
                             <form method="post" id="post-reply-form">
                                 <input type="hidden" name="docId" value="${docId}">
-                                <div style="text-align: center;"><textarea id="textarea-add-reply" placeholder="Add a review" rows="5" style="width: 100%;"></textarea></div>
+                                <div style="text-align: center;"><textarea id="textarea-add-reply" placeholder="Add a review" rows="5" style="width: 100%;" required minlength="3" ></textarea></div>
                                 <div style="text-align: center;">
-                                <button type="submit" class="btn btn-outline-info">Commit</button>
+                                <button type="submit" class="btn btn-outline-info">Post</button>
                                 </div>
                             </form>
                     </div>
@@ -125,7 +125,11 @@ export async function detailProductPage(docId){
      for(let i = 0; i < editReviewForms.length; i++){
          editReviewForms[i].addEventListener('submit', async e => {
              e.preventDefault();
+             const button = e.target.getElementsByTagName('button')[0]; 
+             const label = Util.disableButton(button);
              await Edit.editReview(e.target.docId.value);
+             Util.enableButton(button,label);
+
          });
      }
 
@@ -133,7 +137,22 @@ export async function detailProductPage(docId){
      for(let i = 0; i < deleteReviewForms.length; i++){
         deleteReviewForms[i].addEventListener('submit', async e => {
             e.preventDefault();
-            await Edit.deleteReview(e.target.docId.value);
+            const button = e.target.getElementsByTagName('button')[0]; 
+            const label = Util.disableButton(button);
+            if(!window.confirm('Are you sure you want to delete this review?')){
+                Util.enableButton(button,label); 
+                return;
+            } 
+            try {
+                await FirebaseController.deleteReview(e.target.docId.value);
+                document.getElementById(`entry-${e.target.docId.value}`).remove();
+                Util.info("Success!","Review Message has been deleted");
+            } catch (e) {
+                if(Constant.DEV) console.log(e);
+                Util.info('delete review error',JSON.stringify(e));
+                Util.enableButton(button,label);
+            }
+            
         });
      }
      
@@ -142,6 +161,7 @@ export async function detailProductPage(docId){
 
      document.getElementById('post-reply-form').addEventListener('submit',async e=> {
          e.preventDefault();
+         const button = e.target.getElementsByTagName('button')[0]; 
          const productId = e.target.docId.value;
          const content = document.getElementById('textarea-add-reply').value;
          const timestamp = Date.now();
@@ -150,12 +170,14 @@ export async function detailProductPage(docId){
          const reply = new Reply(
             {productId,uid,email,timestamp,content}
         );
+        const label = Util.disableButton(button);
         try {
            const replyId = await FirebaseController.addReply(reply.serialize());
            reply.docId = replyId;
            replyList.push(reply);
            Util.info('Success!','Review uploaded');
            document.getElementById('textarea-add-reply').value = '';
+           Util.enableButton(button,label);
            detailProductPage(docId);
            
            
@@ -164,6 +186,7 @@ export async function detailProductPage(docId){
         } catch (e) {
             if(Constant.DEV) console.log(e);
             Util.info('Error could not post review',JSON.stringify(e));
+            Util.enableButton(button,label);
         }
 
 
