@@ -52,43 +52,49 @@ export function addEventListeners(){
 
     firebase.auth().onAuthStateChanged(async user => {
         //signed in
+        currentUser = user;
         if(user){
-            currentUser = user;
             if(!Constant.adminEmails.includes(user.email)){
-            Elements.bannerTitle.innerHTML = 'Client';
-            await Profile.getAccountInfo(user);
-            Home.initShoppingCart();
+                Elements.bannerTitle.innerHTML = 'Client';
+                await Profile.getAccountInfo(user);
+                Home.initShoppingCart();
 
 
-            let elements = document.getElementsByClassName('modal-pre-auth');
-            for(let i = 0; i < elements.length; i++){
-                elements[i].style.display = 'none';
-            }
-            elements = document.getElementsByClassName('client-navbar-elements-post-auth');
-            for(let i = 0; i < elements.length; i++){
-                elements[i].style.display = 'block';
-            }
-            Route.routing(window.location.pathname,window.location.hash);
-        }else{
-            isAdmin = true;
-            Elements.bannerTitle.innerHTML = 'Admin';
-            let elements = document.getElementsByClassName('modal-pre-auth');
-            for(let i = 0; i < elements.length; i++){
-                elements[i].style.display = 'none';
-            }
+                let elements = document.getElementsByClassName('modal-pre-auth');
+                for(let i = 0; i < elements.length; i++){
+                    elements[i].style.display = 'none';
+                }
+                elements = document.getElementsByClassName('client-navbar-elements-post-auth');
+                for(let i = 0; i < elements.length; i++){
+                    elements[i].style.display = 'block';
+                }
+                Route.routing(window.location.pathname,window.location.hash);
+            }else{
+                isAdmin = true;
+                Elements.bannerTitle.innerHTML = 'Admin';
+                let elements = document.getElementsByClassName('modal-pre-auth');
+                for(let i = 0; i < elements.length; i++){
+                    elements[i].style.display = 'none';
+                }
 
-            elements = document.getElementsByClassName('admin-navbar-elements-post-auth');
-            for(let i = 0; i < elements.length; i++){
-                elements[i].style.display = 'block';
+                elements = document.getElementsByClassName('admin-navbar-elements-post-auth');
+                for(let i = 0; i < elements.length; i++){
+                    elements[i].style.display = 'block';
+                }
+                if(window.location.pathname != '/'){
+                    const pathname = window.location.pathname;
+                    const hash = window.location.hash;
+                    Route.routing(pathname,hash);
+                }else{
+                history.replaceState(null,null,Route.routePathnames.ADMIN);
+                Route.routing(Route.routePathnames.ADMIN,window.location.hash);
+                }
             }
-            history.replaceState(null,null,Route.routePathnames.ADMIN);
-            Route.routing(Route.routePathnames.ADMIN,window.location.hash);
-        }
 
             
-        }
+        
         //signed out
-        else{
+        }else{
             currentUser = null;
             if(!isAdmin){
             let elements = document.getElementsByClassName('modal-pre-auth');

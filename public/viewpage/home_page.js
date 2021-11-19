@@ -24,31 +24,59 @@ export let cart;
 
 
 
-export async function home_page(){
+
+export async function home_page(action){
 
     
 
     let html = `<div style="text-align: center;"><h1>Enjoy Shopping</h1></div>`;
-
     let products;
-    try {
-        products = await FirebaseController.getProductsList();
-
+        try {
+        
+            products = await FirebaseController.getProductsList(action);
+        
+        
         if(cart){
             cart.items.forEach(item => {
                 const product = products.find(p => item.docId == p.docId);
-                product.qty = item.qty; 
+                if(products.includes(product)){
+                    product.qty = item.qty; 
+                }
             });
         }
-    } catch (e) {
-        if(Constant.DEV) console.log(e);
-        Util.info('Products loading error',JSON.stringify(e));
-    }
+        
+        
+        } catch (e) {
+            if(Constant.DEV) console.log(e);
+            Util.info('Products loading error',JSON.stringify(e));
+        }
+    
+        
+    
 
     for(let i = 0; i < products.length; i++){
         html += buildProductCard(products[i],i);
     }
 
+    html += `
+    <div style="text-align: center; margin: 100px 0 0 5%;">
+        <form method="post" id="paginate-form">`;
+            
+                
+            
+    html += `<button ${FirebaseController.page == 0 ? 'disabled':''} class="btn btn-outline-dark" type="submit" onclick="this.form.submitter='prev'"><i class="fas fa-arrow-left"></i></button>`;
+               
+            
+    html+= `<button disabled class="btn btn-outline-dark">${FirebaseController.page+1}</i></button>`;
+            
+    html+= `<button ${FirebaseController.next == null ? 'disabled ':' '} class="btn btn-outline-dark" type="submit" onclick="this.form.submitter='next'"><i class="fas fa-arrow-right"></i></button>`;
+            
+
+    html+= `</form></div>`;  
+        
+    
+     
+        
     Elements.root.innerHTML = html;
 
 
@@ -57,7 +85,14 @@ export async function home_page(){
 
 
 
+    document.getElementById('paginate-form').addEventListener("submit", async e => {
+        e.preventDefault();
+        const buttons = document.getElementsByTagName('button');
+        
 
+        await home_page(e.target.submitter);
+
+    });
 
     const formDec = document.getElementsByClassName('form-dec-qty');
     for(let i = 0; i < formDec.length; i++){
@@ -105,6 +140,7 @@ export async function home_page(){
 
 function buildProductCard(product,index) {
     return `
+        
       <div id="card-${product.docId}" class="card" style="display: inline-block; max-width: 18rem; margin-right: 15px; border-radius: 10px;" >
       
       <img src="${product.imageURL}" class="card-img-top" style="width:100%; height: 15vw; object-fit: contain; border-radius: 10px;">
@@ -137,6 +173,7 @@ function buildProductCard(product,index) {
         </div>
       </div>
     </div>
+    
       `;
   }
 
@@ -152,3 +189,6 @@ function buildProductCard(product,index) {
     Elements.shoppingCartCount.innerHTML = cart.getTotalCount();
       
   }
+
+
+  

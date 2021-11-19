@@ -34,7 +34,14 @@ exports.cf_getCompletedOrders = functions.https.onCall(getCompletedOrders);
 exports.cf_updateOrder = functions.https.onCall(updateOrder);
 exports.cf_deleteOrder = functions.https.onCall(deleteOrder);  
 
-
+let prev = [];
+let next = null;
+let org = null;
+let last = null;
+let temp = null;
+let page = null;
+let nextIsNull = false;
+let backup = [];
 
 
 async function deleteUser(data,context){
@@ -311,7 +318,7 @@ async function getCompletedOrders(data,context){
 
 
 
-async function getProductList(data,context){
+async function getProductList(action,context){
   if(!isAdmin(context.auth.token.email)){
     if(Constants.DEV){
       console.log('Admin access only',context.auth.token.email);
@@ -320,11 +327,87 @@ async function getProductList(data,context){
   }
 
   try {
-    let productList = [];
+    /*let productList = [];
     const snapShot = await admin.firestore()
                 .collection(Constants.collectionNames.PRODUCTS)
                 .orderBy('name')
-                .get();
+                .get();*/
+
+                const productList = [];
+                let snapShot;
+                if(action == undefined){
+                    org = admin.firestore().collection(Constants.collectionNames.PRODUCTS)
+                            .orderBy('name')
+                            .limit(8);
+                    snapShot = await org.get();
+                    if(!(await nextPageExists(snapShot.docs[snapShot.docs.length - 1]))){
+                        last = snapShot.docs[snapShot.docs.length - 1];
+                        next = admin.firestore().collection(Constants.collectionNames.PRODUCTS)
+                            .orderBy('name')
+                            .startAfter(last)
+                            .limit(8);
+                    }else{
+                        next = null;
+                    }
+            
+                    /*if(prev.length != 0){
+                        prev.length = 0;
+                        page = 0;
+                    }*/
+                    prev.length = 0;
+                    page = 0;
+                    
+                   
+                    
+                }else if(action == 'next'){
+                   if(prev.length == 0){
+                       prev.push(org);
+                   }
+                    
+                    
+                    snapShot = await next.get();
+                    page+=1;
+                    if(!(await nextPageExists(snapShot.docs[snapShot.docs.length - 1]))){
+                        prev.push(next);
+                        last = snapShot.docs[snapShot.docs.length - 1];
+                        next = firebase.firestore().collection(Constants.collectionNames.PRODUCTS)
+                            .orderBy('name')
+                            .startAfter(last)
+                            .limit(8);
+                    }else{
+                        
+                        next =  null
+                    }
+            
+                    
+                }else if(action == 'prev'){
+                    temp = prev[page-1];
+                    snapShot = await temp.get();
+                    page -= 1;
+                    /*if(next != null && snapShot.docs[snapShot.docs.length - 1].id == last.id){
+                        temp = prev.pop();
+                        snapShot = await temp.get();
+                    }*/
+                    if(!(await nextPageExists(snapShot.docs[snapShot.docs.length - 1]))){
+                        last = snapShot.docs[snapShot.docs.length - 1];
+                        next = admin.firestore().collection(Constants.collectionNames.PRODUCTS)
+                            .orderBy('name')
+                            .startAfter(last)
+                            .limit(8);
+                        
+                    }else{
+                        next = null;
+                        nextIsNull = true;
+                    }
+                }
+
+
+
+
+
+
+
+    
     snapShot.forEach(doc => {
       const {name, price, summary, imageName, imageURL} = doc.data();
       const p = {name, price, summary, imageName, imageURL};
@@ -332,6 +415,9 @@ async function getProductList(data,context){
       productList.push(p);
     });
 
+    
+      
+    
     return productList;
     
   } catch (e) {
@@ -340,4 +426,17 @@ async function getProductList(data,context){
   }
 }
 
+async function nextPageExists(nextPage){
+  const batch = await admin.firestore().collection(Constants.collectionNames.PRODUCTS)
+          .orderBy('name')
+          .startAfter(nextPage)
+          .limit(8)
+          .get();
 
+  if(batch.empty){
+      return true;
+  }else{
+      return false;
+  }
+
+}

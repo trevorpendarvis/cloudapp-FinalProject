@@ -4,6 +4,14 @@ import { Product } from '../model/Products.js';
 import { Reply } from '../model/Reply.js';
 import { ShoppingCart } from '../model/ShoppingCart.js';
 
+export let prev = [];
+export let next = null;
+export let org = null;
+export let last = null;
+export let temp = null;
+export let page = null;
+let currentList = [];
+
 export async function signIn(email,password){
     await firebase.auth().signInWithEmailAndPassword(email,password);
 }
@@ -15,19 +23,158 @@ export async function signOut(){
 
 
 
-export async function getProductsList(){
+export async function getProductsList(action){
     const products = [];
-    const snapShot = await firebase.firestore()
-                    .collection(Constant.collectionName.PRODUCT)
-                    .orderBy('name')
-                    .get();
-    snapShot.forEach(doc => {
-        const p = new Product(doc.data());
-        p.docId = doc.id;
+    let snapShot;
+    if(action == undefined){
+        org = firebase.firestore().collection(Constant.collectionName.PRODUCT)
+                .orderBy('name')
+                .limit(8);
+        snapShot = await org.get();
+        if(!(await nextPageExists(snapShot.docs[snapShot.docs.length - 1]))){
+            last = snapShot.docs[snapShot.docs.length - 1];
+            next = firebase.firestore().collection(Constant.collectionName.PRODUCT)
+                .orderBy('name')
+                .startAfter(last)
+                .limit(8);
+        }else{
+            next = null;
+        }
+
+        /*if(prev.length != 0){
+            prev.length = 0;
+            page = 0;
+        }*/
+        prev.length = 0;
+        page = 0;
+        
+       
+        
+    }else if(action == 'next'){
+       if(prev.length == 0){
+           prev.push(org);
+       }
+        
+        
+        snapShot = await next.get();
+        page+=1;
+        if(!(await nextPageExists(snapShot.docs[snapShot.docs.length - 1]))){
+            prev.push(next);
+            last = snapShot.docs[snapShot.docs.length - 1];
+            next = firebase.firestore().collection(Constant.collectionName.PRODUCT)
+                .orderBy('name')
+                .startAfter(last)
+                .limit(8);
+        }else{
+            
+            next =  null
+        }
+
+        
+    }else if(action == 'prev'){
+        temp = prev[page-1];
+        snapShot = await temp.get();
+        page -= 1;
+        /*if(next != null && snapShot.docs[snapShot.docs.length - 1].id == last.id){
+            temp = prev.pop();
+            snapShot = await temp.get();
+        }*/
+        if(!(await nextPageExists(snapShot.docs[snapShot.docs.length - 1]))){
+            last = snapShot.docs[snapShot.docs.length - 1];
+            next = firebase.firestore().collection(Constant.collectionName.PRODUCT)
+                .orderBy('name')
+                .startAfter(last)
+                .limit(8);
+            
+        }else{
+            next = null;
+        }
+    }
+                            
+                            
+    
+            
+    
+    
+    
+            
+    snapShot.docs.forEach(product => {
+        const p = new Product(product.data());
+        p.docId = product.id;
         products.push(p);
     });
+       
+            
+        
+    
+    return products;
+    
+}
+
+/*export async function getNextPage(){
+    const products = [];
+    const batch = firebase.firestore().collection(Constant.collectionName.PRODUCT)
+            .orderBy('name')
+            .startAfter(Constant.paginate.nextPage)
+            .limit(8);
+
+
+            const snapShot = await batch.get();
+            
+            
+            if(Constant.paginate.prevPage.length > 1){
+                Constant.paginate.prevPage.push(snapShot.docs[0]);
+            }
+            Constant.paginate.lastPage = await nextPageExists(snapShot.docs[snapShot.docs.length - 1]);
+            Constant.paginate.nextPage = snapShot.docs[snapShot.docs.length-1];
+            
+            
+            snapShot.docs.forEach(product => {
+                const p = new Product(product.data());
+                p.docId = product.id;
+                products.push(p);
+            });
+            Constant.paginate.page += 1;
+            Constant.paginate.firstPage = false;
+
+    
     return products;
 }
+
+
+export async function getPrevPage(){
+    const products = [];
+    let prevPage = Constant.paginate.prevPage.pop();
+    if(prevPage.id == Constant.paginate.nextPage.id){
+        prevPage = Constant.paginate.prevPage.pop();
+    }
+    
+   
+
+
+    const batch = firebase.firestore().collection(Constant.collectionName.PRODUCT)
+            .orderBy('name')
+            .startAt(prevPage)
+            .limit(8);
+
+
+    const snapShot = await batch.get();
+    Constant.paginate.nextPage = snapShot.docs[snapShot.docs.length - 1];
+    snapShot.docs.forEach(product => {
+        const p = new Product(product.data());
+        p.docId = product.id;
+        products.push(p);
+    });
+    Constant.paginate.page -= 1;
+    if(Constant.paginate.prevPage.length == 0){
+        Constant.paginate.prevPage.push(prevPage);
+        Constant.paginate.firstPage = true;
+    }
+    Constant.paginate.lastPage = false;
+    
+
+    return products;
+}*/
 
 
 export async function checkOut(cart){
@@ -108,14 +255,18 @@ export async function uploadImage(imageFile,imageName){
 
 
 const cf_getProductList = firebase.functions().httpsCallable('cf_getProductList');
-export async function getProductList(){
+export async function getProductList(action){
     let productList = [];
-    const results = await cf_getProductList(); //results.data
+    const results = await cf_getProductList(action); //results.data
     results.data.forEach(data => {
         const p = new Product(data);
         p.docId = data.docId;
+        //next = data.next;
+        //page = p.page;
         productList.push(p);
     });
+
+    
     return productList;
 }
 
@@ -237,3 +388,21 @@ export async function updateReview(reply){
 export async function deleteReview(docId){
     await firebase.firestore().collection(Constant.collectionName.REPLIES).doc(docId).delete();
 }
+
+
+export async function nextPageExists(nextPage){
+    const batch = await firebase.firestore().collection(Constant.collectionName.PRODUCT)
+            .orderBy('name')
+            .startAfter(nextPage)
+            .limit(8)
+            .get();
+
+    if(batch.empty){
+        return true;
+    }else{
+        return false;
+    }
+
+}
+
+

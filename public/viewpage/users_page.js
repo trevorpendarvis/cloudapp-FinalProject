@@ -18,9 +18,8 @@ export function addEventListeners(){
 
 export async function users_page(){
 
-  if(!Auth.currentUser || !Constant.adminEmails.includes(Auth.currentUser.email)){
-    history.replaceState(null,null,Route.routePathnames.HOME);
-    Route.routing(Route.routePathnames.HOME);
+  if(!Auth.isAdmin || !Auth.currentUser){
+    Element.root.innerHTML = `<h1>Admins only<h1>`;
     return;
 }
 

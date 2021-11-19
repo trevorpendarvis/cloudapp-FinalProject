@@ -1,4 +1,13 @@
 export const DEV = true;
+export const paginate = {
+    pageview: 1,
+    page: 0,
+    nextPage: null,
+    prevPage:[],
+    lastPage: false,
+    firstPage:true,
+
+}
 
 export const collectionName = {
     PRODUCT: 'products',

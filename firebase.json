@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "site": "s2progesstrevorpendarvis",
+    "site": "s3progesstrevorpendarvis",
     "public": "public",
     "ignore": [
       "firebase.json",

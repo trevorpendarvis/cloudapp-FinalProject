@@ -44,3 +44,11 @@ input{
 .client-navbar-elements-post-auth{
     display: none;
 }
+
+
+textarea{
+    width: 100%;
+    min-height: 150px;
+}
+
+

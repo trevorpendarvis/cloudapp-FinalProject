@@ -9,7 +9,7 @@ import * as Auth from '../controller/auth.js'
 
 export let imageFile = null;
 
-export function addEventListeners() {
+export async function addEventListeners() {
   Element.menuProducts.addEventListener("click", async () => {
     history.pushState(null,null,Route.routePathnames.PRODUCTS);
     const button = Element.menuProducts;
@@ -41,11 +41,10 @@ export function addEventListeners() {
   });
 }
 
-export async function products_page() {
+export async function products_page(action) {
   
-  if(!Auth.currentUser || !Constant.adminEmails.includes(Auth.currentUser.email)){
-    history.replaceState(null,null,Route.routePathnames.HOME);
-    Route.routing(Route.routePathnames.HOME);
+  if(!Auth.isAdmin || !Auth.currentUser){
+    Element.root.innerHTML = `<h1>Admins only<h1>`;
     return;
 }
   
@@ -63,7 +62,7 @@ export async function products_page() {
   //retrieve products list
   let productsList;
   try {
-    productsList = await FirebaseController.getProductList();
+    productsList = await FirebaseController.getProductsList(action);
   } catch (e) {
     if (Constant.DEV) console.log(e);
     Util.info("Error Products list", JSON.stringify(e));
@@ -76,8 +75,38 @@ export async function products_page() {
 
     html += buildProductCard(p);
   });
+
+
+  html += `
+    <div style="text-align: center; margin: 100px 0 0 5%;">
+        <form method="post" id="paginate-form">`;
+            
+                
+            
+    html += `<button ${FirebaseController.page == 0 ? 'disabled':''} class="btn btn-outline-dark" type="submit" onclick="this.form.submitter='prev'"><i class="fas fa-arrow-left"></i></button>`;
+               
+            
+    html+= `<button disabled class="btn btn-outline-dark">${FirebaseController.page+1}</i></button>`;
+            
+    html+= `<button ${FirebaseController.next == null ? 'disabled ':' '} class="btn btn-outline-dark" type="submit" onclick="this.form.submitter='next'"><i class="fas fa-arrow-right"></i></button>`;
+            
+
+    html+= `</form></div>`;  
   
   Element.root.innerHTML = html;
+
+
+
+  document.getElementById('paginate-form').addEventListener("submit", async e => {
+    e.preventDefault();
+    const buttons = document.getElementsByTagName('button');
+    
+
+    await products_page(e.target.submitter);
+
+});
+
+
 
   document
     .getElementById("button-add-product")
@@ -159,15 +188,15 @@ function buildProductCard(product) {
     
     <img src="${product.imageURL}" class="card-img-top" style="width:100%; height: 15vw; object-fit: contain; border-radius: 10px;">
     
-    <hr style="border-top:  solid #AAA; border-radius: 5px; rounded">
+    <hr style="border-top:  solid #000000; width:100%; border-radius: 5px; rounded">
     <div class="card-body">
       <h5 class="card-title">Name: ${product.name}</h5>
-      <hr style="border-top: 3px solid #AAA;">
+      <hr style="border-top: 3px solid #000000; width:100%;">
       <p class="card-text"><b>Price: $${product.price}</b></p>
-      <hr style="border-top: 3px solid #AAA;">
+      <hr style="border-top: 3px solid #000000; width:100%;">
       <p class="card-text"><b>Description: ${product.summary}</b></p>
     </div>
-    <hr style="border-top:  solid #AAA; border-radius: 5px; rounded">
+    <hr style="border-top:  solid #000000; width:100%; border-radius: 5px; rounded">
     <form class="form-edit-products float-start" method="post">
       <input type="hidden" name="docId" value="${product.docId}">
       <button type="submit" class="btn btn-outline-dark" style="border-radius: 12px;">Edit</button>
