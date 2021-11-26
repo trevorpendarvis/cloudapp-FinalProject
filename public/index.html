@@ -284,6 +284,7 @@
             <div>
               <button type="submit" class="btn btn-outline-success">Update</button>
             </div>
+          </form>>
         </div>
       </div>
     </div>
@@ -301,15 +302,20 @@
       <div class="modal-body">
         <div>
           <div style="text-align: center;">
-          <img style="margin-bottom: 20px;" id="wishlist-form-img">
+          <img style="margin-bottom: 20px; width:100%; height: 15vw; object-fit: contain;" id="wishlist-form-img">
           </div>
           <div style="text-align: center;">
-          <form method="post" class="d-inline" id="plus-and-minus-form">
-            <input id="product-hidden" type="hidden" name="p" value="">
-            <button class="btn btn-outline-danger" type="submit" onclick="this.form.submitter='minus'">&minus;</button>
-            <div id="product-qty" class="container rounded text-center text-white bg-info d-inline-block w-50"></div>
-            <button class="btn btn-outline-success" type="submit" onclick="this.form.submitter='plus'">&plus;</button>
-          </form>
+            <form method="post" class="d-inline" id="plus-and-minus-form-wishlist">
+              <div>
+                <input id="product-hidden" type="hidden" name="product" value="">
+                <input type="hidden" name="count" value="0" id="product-qty-count">
+                <button disabled  type="button" class="btn btn-outline-danger" id="minus-to-cart-from-wishlist">&minus;</button>
+                <div id="product-qty-from-wishlist" class="container rounded text-center text-white bg-info d-inline-block w-50"></div>
+                <button type="button" class="btn btn-outline-success" id="add-to-cart-from-wishlist">&plus;</button>
+              </div>
+              <hr style="border-top: 3px solid #374045;">
+              <button type="submit" class="btn btn-outline-success">Submit</button>
+            </form>
           </div>
         </div>
       </div>

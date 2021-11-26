@@ -39,10 +39,13 @@ export const addFundsForm = document.getElementById('form-add-funds');
 export const editReviewForm = document.getElementById('form-edit-review');
 export const wishlistForm = {
     img: document.getElementById('wishlist-form-img'),
-    form: document.getElementById('plus-and-minus'),
-    qty: document.getElementById('product-qty'),
+    form: document.getElementById('plus-and-minus-form-wishlist'),
+    qty: document.getElementById('product-qty-from-wishlist'),
     title: document.getElementById('wishlist-modal-title'),
     hidden: document.getElementById('product-hidden'),
+    addBtn: document.getElementById('add-to-cart-from-wishlist'),
+    minusBtn: document.getElementById('minus-to-cart-from-wishlist'),
+    count: document.getElementById('product-qty-count'),
 };
 
 

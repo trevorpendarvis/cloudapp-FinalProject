@@ -37,6 +37,13 @@ export class ShoppingCart{
         this.saveToLocalStorage();
     }
 
+    addFromWishList(product,qty){
+        product.qty = qty;
+        const newItem = product.serialize();
+        newItem.docId = product.docId;
+        this.items.push(newItem);
+        this.saveToLocalStorage();
+    }
 
     removeItem(product){
         //dec qty or remove if qty == 0

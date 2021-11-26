@@ -37,7 +37,9 @@ export async function home_page(action){
         try {
         
             products = await FirebaseController.getProductsList(action);
-            wishList = await FirebaseController.getWishlist(Auth.currentUser.uid);
+            if(Auth.currentUser){
+                wishList = await FirebaseController.getWishlist(Auth.currentUser.uid);
+            }
         
         if(cart){
             cart.items.forEach(item => {

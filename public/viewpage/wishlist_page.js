@@ -24,7 +24,7 @@ export async function wishlist_page(){
         Elements.root.innerHTML = '<h1>Protected Page</h1>';
         return;
     }
-
+    const cart = Home.cart;
 
     let wishlist = [];
     const productList = [];
@@ -149,7 +149,8 @@ export async function wishlist_page(){
 
         });
     }
-
+    
+    
 
     for(let i = 0; i < addWishlistItemForms.length; i++){
         addWishlistItemForms[i].addEventListener('submit', async e => {
@@ -158,25 +159,92 @@ export async function wishlist_page(){
             const label = Util.disableButton(button);
             const index = e.target.index.value;
             const product = productList[index];
+            await clearForm();
+            Elements.wishlistForm.hidden.value = product.docId;
             Elements.wishlistForm.title.innerHTML = product.name;
             Elements.wishlistForm.img.src = product.imageURL;
-            Elements.wishlistForm.qty.innerHTML = `${product.qty == null || product.qty == 0 ? 'Add' : product.qty}`;
-            Elements.wishlistForm.hidden.value = product;
+            Elements.wishlistForm.qty.innerText = `Add`;
             Elements.modalWishlist.show();
             Util.enableButton(button,label);
 
         });
-    }
 
+    }
 
     
 
+   
+    Elements.wishlistForm.addBtn.addEventListener('click',() => {
+        let count = Number.parseInt(Elements.wishlistForm.count.value);
+        ++count;
+        Elements.wishlistForm.count.value = count.toString();
+        Elements.wishlistForm.qty.innerHTML = count.toString();
+        Elements.wishlistForm.minusBtn.disabled = false;
 
-    /*
-     e.preventDefault();
-        const p = Elements.wishlistForm.hidden.value;
-        Home.cart.addItem(p);
-        document.getElementById('product-qty').innerHTML = p.qty;
-        Elements.shoppingCartCount.innerHTML = Home.cart.getTotalCount();
-    */
+    });
+
+
+    Elements.wishlistForm.minusBtn.addEventListener('click', () => {
+        let count = Number.parseInt(Elements.wishlistForm.count.value);
+        --count;
+        if(count == 0){
+            Elements.wishlistForm.qty.innerHTML = 'Add';
+            Elements.wishlistForm.minusBtn.disabled = true;
+            
+        }
+        Elements.wishlistForm.count.value = count.toString();
+        Elements.wishlistForm.qty.innerHTML = count.toString();
+    });
+
+
+
+    Elements.wishlistForm.form.addEventListener('submit',async e => {
+        e.preventDefault();
+        const button = e.target.getElementsByTagName('button')[2];
+        const label = Util.disableButton(button);
+        const productId = Elements.wishlistForm.hidden.value;
+        const qty = Number.parseInt(Elements.wishlistForm.count.value);
+        if(qty == 0){
+            Util.info('Error','you cant add 0 qty to your shopping cart',Elements.modalWishlist);
+            Util.enableButton(button,label);
+            return;
+        }
+        
+        try {
+            const product = await FirebaseController.getProductInfo(productId);
+            cart.addFromWishList(product,qty);
+            Elements.shoppingCartCount.innerHTML = cart.getTotalCount();
+            Util.enableButton(button,label);
+            Util.info('Success!',`${qty} of the item ${product.name} was added to your cart`,Elements.modalWishlist);         
+        } catch (e) {
+            if(Constant.DEV) console.log(e);
+            Util.enableButton(button,label);
+            Util.info('Something happened',JSON.stringify(e),Elements.modalWishlist)
+        }
+
+
+        let item;
+        for(let i = 0; i < wishlist.length; i++){
+            if(wishlist[i].productId == productId){
+                item = wishlist[i];
+            }
+        }
+        
+        try {
+            await FirebaseController.deleteItemFromWishlist(item.docId);
+            await wishlist_page();
+        } catch (e) {
+            if(Constant.DEV) console.log(e);
+            Util.info('Something happened',JSON.stringify(e),Elements.modalWishlist)
+        }
+        
+    });
+
+
+    async function clearForm(){
+        Elements.wishlistForm.hidden.value = '';
+        Elements.wishlistForm.title.innerHTML = '';
+        Elements.wishlistForm.img.src = null;
+        Elements.wishlistForm.count.value = '0';
+    }
 }
