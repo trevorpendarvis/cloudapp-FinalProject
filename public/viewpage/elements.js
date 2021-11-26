@@ -14,6 +14,7 @@ export const menuProducts = document.getElementById('menu-products');
 export const menuUsers = document.getElementById('menu-users');
 export const bannerTitle = document.getElementById('banner-title');
 export const menuAdminHome = document.getElementById('menu-home-admin');
+export const menuWishlist = document.getElementById('menu-wishlist');
 
 
 
@@ -28,6 +29,7 @@ export const purchaseHistoryDetailsBody = document.getElementById('purchase-hist
 export const signUpModal = new bootstrap.Modal(document.getElementById('modal-sign-up'),{backdrop:'static'});
 export const addFundsModal = new bootstrap.Modal(document.getElementById('modal-add-funds'),{backdrop:'static'});
 export const modalEditReview = new bootstrap.Modal(document.getElementById('modal-edit-review'), {backdrop: 'static'});
+export const modalWishlist = new bootstrap.Modal(document.getElementById('wishlist-modal'), {backdrop: 'static'});
 
 //forms
 export const signInForm = document.getElementById('signIn-form');
@@ -35,6 +37,13 @@ export const signUpForm = document.getElementById('sign-up-form');
 export const signUpFormPasswordError = document.getElementById('sign-up-form-password-error');
 export const addFundsForm = document.getElementById('form-add-funds');
 export const editReviewForm = document.getElementById('form-edit-review');
+export const wishlistForm = {
+    img: document.getElementById('wishlist-form-img'),
+    form: document.getElementById('plus-and-minus'),
+    qty: document.getElementById('product-qty'),
+    title: document.getElementById('wishlist-modal-title'),
+    hidden: document.getElementById('product-hidden'),
+};
 
 
 

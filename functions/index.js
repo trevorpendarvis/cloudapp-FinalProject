@@ -34,14 +34,7 @@ exports.cf_getCompletedOrders = functions.https.onCall(getCompletedOrders);
 exports.cf_updateOrder = functions.https.onCall(updateOrder);
 exports.cf_deleteOrder = functions.https.onCall(deleteOrder);  
 
-let prev = [];
-let next = null;
-let org = null;
-let last = null;
-let temp = null;
-let page = null;
-let nextIsNull = false;
-let backup = [];
+
 
 
 async function deleteUser(data,context){
@@ -319,7 +312,7 @@ async function getCompletedOrders(data,context){
 
 
 async function getProductList(action,context){
-  if(!isAdmin(context.auth.token.email)){
+ /* if(!isAdmin(context.auth.token.email)){
     if(Constants.DEV){
       console.log('Admin access only',context.auth.token.email);
       throw new functions.https.HttpsError('unauthenticated','Only admins may invoke this operation');
@@ -327,11 +320,11 @@ async function getProductList(action,context){
   }
 
   try {
-    /*let productList = [];
+    let productList = [];
     const snapShot = await admin.firestore()
                 .collection(Constants.collectionNames.PRODUCTS)
                 .orderBy('name')
-                .get();*/
+                .get();
 
                 const productList = [];
                 let snapShot;
@@ -350,10 +343,10 @@ async function getProductList(action,context){
                         next = null;
                     }
             
-                    /*if(prev.length != 0){
+                    if(prev.length != 0){
                         prev.length = 0;
                         page = 0;
-                    }*/
+                    }
                     prev.length = 0;
                     page = 0;
                     
@@ -387,7 +380,7 @@ async function getProductList(action,context){
                     /*if(next != null && snapShot.docs[snapShot.docs.length - 1].id == last.id){
                         temp = prev.pop();
                         snapShot = await temp.get();
-                    }*/
+                    }
                     if(!(await nextPageExists(snapShot.docs[snapShot.docs.length - 1]))){
                         last = snapShot.docs[snapShot.docs.length - 1];
                         next = admin.firestore().collection(Constants.collectionNames.PRODUCTS)
@@ -423,7 +416,7 @@ async function getProductList(action,context){
   } catch (e) {
     if(Constants.DEV) console.log(e);
     throw new functions.https.HttpsError('internal',`get productsList failed. \n System response: ${JSON.stringify(e)}`);
-  }
+  }*/
 }
 
 async function nextPageExists(nextPage){

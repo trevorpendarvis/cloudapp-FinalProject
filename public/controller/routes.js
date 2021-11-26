@@ -6,6 +6,7 @@ import * as Products from '../viewpage/products_page.js'
 import * as User from '../viewpage/users_page.js'
 import * as AdminHome from '../viewpage/admin_home_page.js'
 import * as DetailView from '../viewpage/details_product_page.js'
+import * as Wishlist from '../viewpage/wishlist_page.js'
 
 
 export const routePathnames = {
@@ -17,6 +18,7 @@ export const routePathnames = {
     PRODUCTS:'/products',
     USERS:'/users',
     DETAILS:'/details',
+    WISHLIST:'/wishlist',
 };
 
 export const routes = [
@@ -28,6 +30,7 @@ export const routes = [
     {pathname:routePathnames.USERS, page: User.users_page},
     {pathname:routePathnames.ADMIN,page: AdminHome.admin_home_page},
     {pathname:routePathnames.DETAILS, page: DetailView.detailProductPage},
+    {pathname:routePathnames.WISHLIST, page:Wishlist.wishlist_page},
 ];
 
 

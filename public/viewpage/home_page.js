@@ -6,6 +6,7 @@ import * as Route from '../controller/routes.js'
 import * as Auth from '../controller/auth.js'
 import { ShoppingCart } from '../model/ShoppingCart.js'
 import * as DetailView from './details_product_page.js'
+import { Wishlist } from '../model/wishlist.js'
 
 
 
@@ -31,10 +32,12 @@ export async function home_page(action){
 
     let html = `<div style="text-align: center;"><h1>Enjoy Shopping</h1></div>`;
     let products;
+    let wishList = [];
+    
         try {
         
             products = await FirebaseController.getProductsList(action);
-        
+            wishList = await FirebaseController.getWishlist(Auth.currentUser.uid);
         
         if(cart){
             cart.items.forEach(item => {
@@ -55,7 +58,7 @@ export async function home_page(action){
     
 
     for(let i = 0; i < products.length; i++){
-        html += buildProductCard(products[i],i);
+        html += buildProductCard(products[i],i,wishList);
     }
 
     html += `
@@ -132,13 +135,55 @@ export async function home_page(action){
         });
     }
 
+    const addToWishlistForms = document.getElementsByClassName('form-add-to-wishlist');
+    for(let i = 0; i < addToWishlistForms.length; i++){
+        addToWishlistForms[i].addEventListener('submit', async e => {
+            e.preventDefault();
+            const button = e.target.getElementsByTagName('button')[0];
+            const label = Util.disableButton(button);
+            const productId = e.target.docId.value;
+            const uid = Auth.currentUser.uid;
+            const timestamp = Date.now();
+            const wishlist = new Wishlist({productId,uid,timestamp});
+            try {
+                const wishlistId = await FirebaseController.addItemToWishlist(wishlist.serialize(timestamp));
+                wishlist.docId = wishlistId;
+                Util.info('Success!','Item added to your wishlist');
+            } catch (e) {
+                if(Constant.DEV) console.log(e);
+                Util.info('Can not add item to wishlist at this time\n Try again later',JSON.stringify(e));
+            }
+
+
+
+
+
+            Util.enableButton(button,label);
+            await home_page();
+        });
+    }
+
 
 }
 
 
 
 
-function buildProductCard(product,index) {
+function buildProductCard(product,index,wishlist) {
+    
+    let alreadyInList = false;
+    
+    wishlist.forEach(item => {
+        if(product.docId == item.productId){
+            alreadyInList = true;
+        }
+    });
+    
+    
+    
+    
+    
+    
     return `
         
       <div id="card-${product.docId}" class="card" style="display: inline-block; max-width: 18rem; margin-right: 15px; border-radius: 10px;" >
@@ -157,6 +202,13 @@ function buildProductCard(product,index) {
             <form method="post" class="form-view-product-details">
                 <input type="hidden" name="docId" value="${product.docId}">
                 <button type="submit" class="btn btn-outline-primary">View details</button>
+            </form>
+            <hr style="border-top: 3px solid #374045;">
+            <form method="post" class="form-add-to-wishlist">
+                <input type="hidden" name="docId" value="${product.docId}">
+                ${alreadyInList ? '<button type="submit" disabled class="btn btn-outline-primary">Already in Wishlist</button>' : '<button type="submit"  class="btn btn-outline-primary">+Add to wishlist</button>'}
+                
+            
             </form>
             <hr style="border-top: 3px solid #374045;">
             <form method="post" class="d-inline form-dec-qty">

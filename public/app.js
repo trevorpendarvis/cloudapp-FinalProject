@@ -10,6 +10,7 @@ import * as User from './viewpage/users_page.js'
 import * as AdminHome from './viewpage/admin_home_page.js'
 import * as Edit from './controller/edit_products.js'
 import * as EditReview from './controller/edit_reviews.js'
+import * as Wishlist from './viewpage/wishlist_page.js'
 
 Auth.addEventListeners();
 Home.addEventListeners();
@@ -22,6 +23,7 @@ User.addEventListeners();
 AdminHome.addEventListeners();
 Edit.addEventListeners();
 EditReview.addEventListeners();
+Wishlist.addEventListeners();
 
 
 

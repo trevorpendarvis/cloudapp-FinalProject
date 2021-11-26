@@ -3,6 +3,7 @@ import * as Constant from '../model/constant.js'
 import { Product } from '../model/Products.js';
 import { Reply } from '../model/Reply.js';
 import { ShoppingCart } from '../model/ShoppingCart.js';
+import { Wishlist } from '../model/wishlist.js';
 
 export let prev = [];
 export let next = null;
@@ -328,7 +329,7 @@ export async function getProductInfo(docId){
                     .get();
     if(result){
         const p = new Product(result.data());
-        p.docId = result.data.docId;
+        p.docId = docId;
         return p;
     }else{
         return null;
@@ -405,4 +406,40 @@ export async function nextPageExists(nextPage){
 
 }
 
+
+export async function addItemToWishlist(wishlist){
+    const ref = await firebase.firestore().collection(Constant.collectionName.WISHLIST)
+                .add(wishlist);
+
+    return ref.id;
+}
+
+
+
+export async function getWishlist(uid){
+    let wishlist = [];
+    const snapShot = await firebase.firestore().collection(Constant.collectionName.WISHLIST)
+                .where('uid','==',uid)
+                .orderBy('timestamp','desc')
+                .get();
+
+    if(snapShot.length < 1){
+        return null;
+    }
+
+
+    snapShot.forEach(item => {
+        const i = new Wishlist(item.data());
+        i.docId = item.id;
+        wishlist.push(i);
+    });
+
+    return wishlist;
+}
+
+export async function deleteItemFromWishlist(docId){
+    await firebase.firestore().collection(Constant.collectionName.WISHLIST)
+            .doc(docId)
+            .delete();
+}
 

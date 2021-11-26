@@ -14,6 +14,7 @@ export const collectionName = {
     PURCHASE_HISTORY: 'purchase_history',
     ACCOUNT_INFO: 'account_info',
     REPLIES: 'replies',
+    WISHLIST:'wishlist',
 };
 
 export const storageFolderNames = {

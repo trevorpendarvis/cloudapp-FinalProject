@@ -46,6 +46,11 @@
               Purchases
             </button>
           </li>
+          <li>
+            <button id="menu-wishlist" class="btn btn-outline-dark client-navbar-elements-post-auth">
+              Wishlist
+            </button>
+          </li>
           <li class="nav-item">
             <button class="btn btn-outline-dark admin-navbar-elements-post-auth" id="menu-products">Products</button>
           </li>
@@ -285,6 +290,32 @@
   </div>
 
 
+  <!-- Modal add to cart wishlist -->
+<div class="modal fade" id="wishlist-modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="wishlist-modal-title" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 style="text-align: center;" class="modal-title" id="wishlist-modal-title"></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div>
+          <div style="text-align: center;">
+          <img style="margin-bottom: 20px;" id="wishlist-form-img">
+          </div>
+          <div style="text-align: center;">
+          <form method="post" class="d-inline" id="plus-and-minus-form">
+            <input id="product-hidden" type="hidden" name="p" value="">
+            <button class="btn btn-outline-danger" type="submit" onclick="this.form.submitter='minus'">&minus;</button>
+            <div id="product-qty" class="container rounded text-center text-white bg-info d-inline-block w-50"></div>
+            <button class="btn btn-outline-success" type="submit" onclick="this.form.submitter='plus'">&plus;</button>
+          </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 
   <!-- Modal: info box-->
