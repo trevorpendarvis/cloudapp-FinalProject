@@ -4,6 +4,7 @@ import { Product } from '../model/Products.js';
 import { Reply } from '../model/Reply.js';
 import { ShoppingCart } from '../model/ShoppingCart.js';
 import { Wishlist } from '../model/wishlist.js';
+import * as Auth from './auth.js'
 
 export let prev = [];
 export let next = null;
@@ -197,6 +198,10 @@ export async function getPurchaseHistory(uid){
     });
     return cartHistory;
 }
+
+
+
+
 
 export async function createUser(email, password){
     await firebase.auth().createUserWithEmailAndPassword(email,password);
@@ -441,5 +446,60 @@ export async function deleteItemFromWishlist(docId){
     await firebase.firestore().collection(Constant.collectionName.WISHLIST)
             .doc(docId)
             .delete();
+}
+
+
+
+export async function deleteProfile(uid){
+    let snapShot = await firebase.firestore().collection(Constant.collectionName.REPLIES)
+                        .where('uid','==',uid)
+                        .get();
+    snapShot.forEach(async doc => {
+        await await firebase.firestore().collection(Constant.collectionName.REPLIES)
+                    .doc(doc.id)
+                    .delete();
+    });
+
+    snapShot = await firebase.firestore().collection(Constant.collectionName.WISHLIST)
+    .where('uid','==',uid)
+    .get();
+
+    snapShot.forEach(async doc => {
+        await await firebase.firestore().collection(Constant.collectionName.WISHLIST)
+                    .doc(doc.id)
+                    .delete();
+    });
+
+    snapShot = await firebase.firestore().collection(Constant.collectionName.PURCHASE_HISTORY)
+        .where('uid', '==', uid)
+        .get();
+
+    snapShot.forEach(async doc => {
+        await firebase.firestore().collection(Constant.collectionName.PURCHASE_HISTORY)
+                .doc(doc.id)
+                .delete();
+    });
+
+
+    snapShot = await firebase.firestore().collection(Constant.collectionName.ACCOUNT_INFO)
+            .doc(uid)
+            .get();
+
+    
+    
+    
+    const account = new AccountInfo(snapShot.data());
+    if(account.photoURL[0] == 'h'){
+        await firebase.storage().ref()
+        .child(Constant.storageFolderNames.PROFILE_PHOTOS + uid).delete();
+    }
+    
+    
+    //await signOut();
+    await firebase.auth().currentUser.delete();
+    
+    
+    
+    
 }
 

@@ -323,6 +323,28 @@
   </div>
 </div>
 
+<!-- Modal -->
+<div class="modal fade" id="modal-are-you-sure" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel">Warning this action is irreversible</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form method="post" id="are-you-sure-form">
+          <div style="text-align: center;" id="are-you-sure-message"></div>
+          <hr style="border-top: 3px solid #374045;">
+          <div style="text-align: center;">
+            <button style="display: inline-block;" type="submit" class="btn btn-outline-danger" onclick="this.form.submitter=true">Yes</button>
+            <button style="display: inline-block;" type="submit" class="btn btn-outline-info" onclick="this.form.submitter=false">No</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
 
   <!-- Modal: info box-->
   <div class="modal fade" id="modal-info" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"

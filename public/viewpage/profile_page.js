@@ -7,15 +7,15 @@ import * as Auth from '../controller/auth.js'
 import * as Wallet from './wallet.js'
 
 export let accountInfo;
-export function addEventListeners(){
+export function addEventListeners() {
     Elements.menuProfile.addEventListener('click', async () => {
-        history.pushState(null,null,Route.routePathnames.PROFILE);
+        history.pushState(null, null, Route.routePathnames.PROFILE);
         await profile_page();
     });
 }
 
 
-export async function profile_page(){
+export async function profile_page() {
     let html = '<h1>Profile Page</h1>';
 
     if (!Auth.currentUser) {
@@ -24,7 +24,7 @@ export async function profile_page(){
     }
 
 
-    if(!accountInfo){
+    if (!accountInfo) {
         html += `<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
                         <symbol id="exclamation-triangle-fill" fill="currentColor" viewBox="0 0 16 16">
                             <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
@@ -153,6 +153,8 @@ export async function profile_page(){
                 </table>
             </form>
     `;
+
+    
     /*
     html += `
         <table class="table table-sm">
@@ -188,7 +190,7 @@ export async function profile_page(){
         </table>
     `;
 
-
+    html += '<div><button style="margin-left: 48%;" class="btn btn-outline-danger" id="delete-profile">Delete Profile</button></div>';
     Elements.root.innerHTML = html;
 
 
@@ -199,34 +201,34 @@ export async function profile_page(){
 
     const updatePhotoButton = document.getElementById('profile-photo-update-button');
     updatePhotoButton.addEventListener('click', async () => {
-        if(!photoFile){
-            Util.info('No photo selected','Choose a photo to continue');
+        if (!photoFile) {
+            Util.info('No photo selected', 'Choose a photo to continue');
             return;
         }
 
         const label = Util.disableButton(updatePhotoButton);
         try {
-            const photoURL = await FirebaseController.uploadProfilePhoto(photoFile,Auth.currentUser.uid);
-            await FirebaseController.updateAccount(Auth.currentUser.uid, {photoURL});
+            const photoURL = await FirebaseController.uploadProfilePhoto(photoFile, Auth.currentUser.uid);
+            await FirebaseController.updateAccount(Auth.currentUser.uid, { photoURL });
             accountInfo.photoURL = photoURL;
             Elements.menuProfile.innerHTML = `
             <img src="${accountInfo.photoURL}" class="rounded-circle" height="30px">
             `;
-            Util.info('Success!','Photo update complete');
+            Util.info('Success!', 'Photo update complete');
         } catch (e) {
-            if(Constant.DEV) console.log(e);
-            Util.info('Update photo failed',JSON.stringify(e));
+            if (Constant.DEV) console.log(e);
+            Util.info('Update photo failed', JSON.stringify(e));
         }
 
 
-        Util.enableButton(updatePhotoButton,label);
+        Util.enableButton(updatePhotoButton, label);
     });
 
 
     let photoFile;
-    document.getElementById('profile-photo-upload-button').addEventListener('change', async e=> {
+    document.getElementById('profile-photo-upload-button').addEventListener('change', async e => {
         photoFile = e.target.files[0];
-        if(!photoFile){
+        if (!photoFile) {
             document.getElementById('profile-img-tag').src = accountInfo.photoURL;
             return;
         }
@@ -238,54 +240,78 @@ export async function profile_page(){
         reader.readAsDataURL(photoFile);
     });
 
-const forms = document.getElementsByClassName('form-profile');
-for(let i = 0; i < forms.length; i++){
-    forms[i].addEventListener('submit', async e=> {
-        e.preventDefault();
-        const inputTag = e.target.getElementsByTagName('input')[0];
-        const buttons = e.target.getElementsByTagName('button');
-        const buttonLabel = e.target.submitter;
-        const key = inputTag.name;
-        const value = inputTag.value;
+    const forms = document.getElementsByClassName('form-profile');
+    for (let i = 0; i < forms.length; i++) {
+        forms[i].addEventListener('submit', async e => {
+            e.preventDefault();
+            const inputTag = e.target.getElementsByTagName('input')[0];
+            const buttons = e.target.getElementsByTagName('button');
+            const buttonLabel = e.target.submitter;
+            const key = inputTag.name;
+            const value = inputTag.value;
 
 
-        if(buttonLabel == 'Edit'){
-            buttons[0].style.display = 'none';
-            buttons[1].style.display = 'inline-block';
-            buttons[2].style.display = 'inline-block';
-            inputTag.disabled = false;
-        }else if(buttonLabel == 'Update'){
-            const updateInfo = {}; //updateInfo.xxx = yyy;
-            updateInfo[key] = value;
+            if (buttonLabel == 'Edit') {
+                buttons[0].style.display = 'none';
+                buttons[1].style.display = 'inline-block';
+                buttons[2].style.display = 'inline-block';
+                inputTag.disabled = false;
+            } else if (buttonLabel == 'Update') {
+                const updateInfo = {}; //updateInfo.xxx = yyy;
+                updateInfo[key] = value;
 
-            const label = Util.disableButton(buttons[1]);
+                const label = Util.disableButton(buttons[1]);
 
-            try {
-                await FirebaseController.updateAccount(Auth.currentUser.uid,updateInfo);
-                accountInfo[key] = value;
-            } catch (e) {
-                if(Constant.DEV) console.log(e)
-                Util.info(`Update Failed for ${key}`,JSON.stringify(e));
+                try {
+                    await FirebaseController.updateAccount(Auth.currentUser.uid, updateInfo);
+                    accountInfo[key] = value;
+                } catch (e) {
+                    if (Constant.DEV) console.log(e)
+                    Util.info(`Update Failed for ${key}`, JSON.stringify(e));
+                }
+                Util.enableButton(buttons[1], label);
+
+                buttons[0].style.display = 'inline-block';
+                buttons[1].style.display = 'none';
+                buttons[2].style.display = 'none';
+                inputTag.disabled = true;
+            } else {
+                buttons[0].style.display = 'inline-block';
+                buttons[1].style.display = 'none';
+                buttons[2].style.display = 'none';
+                inputTag.disabled = true;
+                inputTag.value = accountInfo[key];
             }
-            Util.enableButton(buttons[1],label);
+        });
+    }
+    document.getElementById('delete-profile').addEventListener('click',() => {
+        Elements.warrningMessageForm.innerHTML = '';
+        Elements.warrningMessageForm.innerHTML = 'Are you sure you want to delete your profile?';
+        Elements.modalWarning.show();
+    });
 
-            buttons[0].style.display = 'inline-block';
-            buttons[1].style.display = 'none';
-            buttons[2].style.display = 'none';
-            inputTag.disabled = true;
-        }else{
-            buttons[0].style.display = 'inline-block';
-            buttons[1].style.display = 'none';
-            buttons[2].style.display = 'none';
-            inputTag.disabled = true;
-            inputTag.value = accountInfo[key];
+    Elements.warningForm.addEventListener('submit',async e => {
+        e.preventDefault();
+        if(!e.target.submitter){ 
+            Elements.modalWarning.hide();
+            return;
         }
+        const button = e.target.getElementsByTagName('button')[0];
+        const label = Util.disableButton(button);
+        try {
+            await FirebaseController.deleteProfile(Auth.currentUser.uid);
+            Util.enableButton(button,label);
+            Util.info('We are sorry to see you leave!',Elements.modalWarning);
+        } catch (e) {
+            if(Constant.DEV) console.log(e)
+            Util.info('Can not delete your profile at this time. Try again later',JSON.stringify(e),Elements.modalWarning);
+        }
+
+
     });
 }
 
-}
-
-function actionButtons(){
+function actionButtons() {
     return `
         <button onclick="this.form.submitter='Edit'"
          class="btn btn-outline-primary" type="submit">Edit</button>
@@ -299,49 +325,49 @@ function actionButtons(){
 }
 
 
-export async function getAccountInfo(user){
+export async function getAccountInfo(user) {
 
     try {
         accountInfo = await FirebaseController.getAccountInfo(user.uid);
     } catch (e) {
-        if(Constant.DEV) console.log(e);
-        Util.info(`Failed to retrieve account info for ${user.email}`,JSON.stringify(e));
+        if (Constant.DEV) console.log(e);
+        Util.info(`Failed to retrieve account info for ${user.email}`, JSON.stringify(e));
         accountInfo = null;
         return;
     }
 
     Elements.walletAmount.innerHTML = Util.currency(accountInfo.currentBalence);
-    
+
     Elements.menuProfile.innerHTML = `
             <img src="${accountInfo.photoURL}" class="rounded-circle" height="30px">
     `;
 }
 
-export function checkPaymentMethod(){
-    if(!accountInfo || !accountInfo.creditNo){
+export function checkPaymentMethod() {
+    if (!accountInfo || !accountInfo.creditNo) {
         return false;
-    }else{
+    } else {
         return true;
     }
 }
 
 
 
-export function checkFunds(price){
-    if(accountInfo.currentBalence < price){
+export function checkFunds(price) {
+    if (accountInfo.currentBalence < price) {
         return false;
-    }else{
+    } else {
         return true;
     }
 }
 
-export async function updateAccountBalence(balence){
+export async function updateAccountBalence(balence) {
     accountInfo.currentBalence = balence;
     //document.getElementById('profile-add-funds-value').value = Util.currency(accountInfo.currentBalence);
 }
 
 
-export function updateAfterPurchase(newBalence){
+export function updateAfterPurchase(newBalence) {
     accountInfo.currentBalence = newBalence;
     Elements.walletAmount.innerHTML = Util.currency(newBalence);
 }

@@ -12,6 +12,7 @@ import * as Edit from './controller/edit_products.js'
 import * as EditReview from './controller/edit_reviews.js'
 import * as Wishlist from './viewpage/wishlist_page.js'
 
+
 Auth.addEventListeners();
 Home.addEventListeners();
 Cart.addEventListeners();
@@ -24,6 +25,7 @@ AdminHome.addEventListeners();
 Edit.addEventListeners();
 EditReview.addEventListeners();
 Wishlist.addEventListeners();
+
 
 
 
