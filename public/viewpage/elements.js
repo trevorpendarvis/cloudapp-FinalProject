@@ -29,7 +29,6 @@ export const purchaseHistoryDetailsBody = document.getElementById('purchase-hist
 export const signUpModal = new bootstrap.Modal(document.getElementById('modal-sign-up'),{backdrop:'static'});
 export const addFundsModal = new bootstrap.Modal(document.getElementById('modal-add-funds'),{backdrop:'static'});
 export const modalEditReview = new bootstrap.Modal(document.getElementById('modal-edit-review'), {backdrop: 'static'});
-export const modalWishlist = new bootstrap.Modal(document.getElementById('wishlist-modal'), {backdrop: 'static'});
 export const modalWarning = new bootstrap.Modal(document.getElementById('modal-are-you-sure'), {backdrop: 'static'});
 
 //forms
@@ -40,16 +39,7 @@ export const addFundsForm = document.getElementById('form-add-funds');
 export const editReviewForm = document.getElementById('form-edit-review');
 export const warrningMessageForm = document.getElementById('are-you-sure-message');
 export const warningForm = document.getElementById('are-you-sure-form');
-export const wishlistForm = {
-    img: document.getElementById('wishlist-form-img'),
-    form: document.getElementById('plus-and-minus-form-wishlist'),
-    qty: document.getElementById('product-qty-from-wishlist'),
-    title: document.getElementById('wishlist-modal-title'),
-    hidden: document.getElementById('product-hidden'),
-    addBtn: document.getElementById('add-to-cart-from-wishlist'),
-    minusBtn: document.getElementById('minus-to-cart-from-wishlist'),
-    count: document.getElementById('product-qty-count'),
-};
+
 
 
 

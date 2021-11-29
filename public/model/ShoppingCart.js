@@ -42,6 +42,7 @@ export class ShoppingCart{
         const newItem = product.serialize();
         newItem.docId = product.docId;
         this.items.push(newItem);
+        product.qty = 0;
         this.saveToLocalStorage();
     }
 

@@ -19,6 +19,7 @@ export function addEventListeners(){
 
 
 export async function wishlist_page(){
+    let count = 0;
     let html = '<h1 style="text-align: center;">Wishlist</h1>';
     if (!Auth.currentUser) {
         Elements.root.innerHTML = '<h1>Protected Page</h1>';
@@ -159,13 +160,29 @@ export async function wishlist_page(){
             const label = Util.disableButton(button);
             const index = e.target.index.value;
             const product = productList[index];
-            await clearForm();
-            Elements.wishlistForm.hidden.value = product.docId;
-            Elements.wishlistForm.title.innerHTML = product.name;
-            Elements.wishlistForm.img.src = product.imageURL;
-            Elements.wishlistForm.qty.innerText = `Add`;
-            Elements.modalWishlist.show();
+            let item;
+            for(let i = 0; i < wishlist.length; i++){
+                if(wishlist[i].productId == product.docId){
+                    item = wishlist[i];
+                }
+            }
+            try {
+                cart.addFromWishList(product,1);
+                await FirebaseController.deleteItemFromWishlist(item.docId);
+                Util.info('Success!', `${product.name} was added to your cart`);
+
+            } catch (e) {
+            if(Constant.DEV) console.log(e);
+            Util.info('Something happened',JSON.stringify(e));
+            }
+
+
+
+            
+            Elements.shoppingCartCount.innerHTML = cart.getTotalCount();
             Util.enableButton(button,label);
+            await wishlist_page();
+            
 
         });
 
@@ -174,77 +191,15 @@ export async function wishlist_page(){
     
 
    
-    Elements.wishlistForm.addBtn.addEventListener('click',() => {
-        let count = Number.parseInt(Elements.wishlistForm.count.value);
-        ++count;
-        Elements.wishlistForm.count.value = count.toString();
-        Elements.wishlistForm.qty.innerHTML = count.toString();
-        Elements.wishlistForm.minusBtn.disabled = false;
-
-    });
+    
 
 
-    Elements.wishlistForm.minusBtn.addEventListener('click', () => {
-        let count = Number.parseInt(Elements.wishlistForm.count.value);
-        --count;
-        if(count == 0){
-            Elements.wishlistForm.qty.innerHTML = 'Add';
-            Elements.wishlistForm.minusBtn.disabled = true;
-            
-        }
-        Elements.wishlistForm.count.value = count.toString();
-        Elements.wishlistForm.qty.innerHTML = count.toString();
-    });
+    
 
 
 
-    Elements.wishlistForm.form.addEventListener('submit',async e => {
-        e.preventDefault();
-        const button = e.target.getElementsByTagName('button')[2];
-        const label = Util.disableButton(button);
-        const productId = Elements.wishlistForm.hidden.value;
-        const qty = Number.parseInt(Elements.wishlistForm.count.value);
-        if(qty == 0){
-            Util.info('Error','you cant add 0 qty to your shopping cart',Elements.modalWishlist);
-            Util.enableButton(button,label);
-            return;
-        }
-        
-        try {
-            const product = await FirebaseController.getProductInfo(productId);
-            cart.addFromWishList(product,qty);
-            Elements.shoppingCartCount.innerHTML = cart.getTotalCount();
-            Util.enableButton(button,label);
-            Util.info('Success!',`${qty} of the item ${product.name} was added to your cart`,Elements.modalWishlist);         
-        } catch (e) {
-            if(Constant.DEV) console.log(e);
-            Util.enableButton(button,label);
-            Util.info('Something happened',JSON.stringify(e),Elements.modalWishlist)
-        }
+    
 
 
-        let item;
-        for(let i = 0; i < wishlist.length; i++){
-            if(wishlist[i].productId == productId){
-                item = wishlist[i];
-            }
-        }
-        
-        try {
-            await FirebaseController.deleteItemFromWishlist(item.docId);
-            await wishlist_page();
-        } catch (e) {
-            if(Constant.DEV) console.log(e);
-            Util.info('Something happened',JSON.stringify(e),Elements.modalWishlist)
-        }
-        
-    });
-
-
-    async function clearForm(){
-        Elements.wishlistForm.hidden.value = '';
-        Elements.wishlistForm.title.innerHTML = '';
-        Elements.wishlistForm.img.src = null;
-        Elements.wishlistForm.count.value = '0';
-    }
+    
 }
