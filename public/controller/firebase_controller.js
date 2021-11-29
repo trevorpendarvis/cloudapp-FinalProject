@@ -493,6 +493,10 @@ export async function deleteProfile(uid){
         await firebase.storage().ref()
         .child(Constant.storageFolderNames.PROFILE_PHOTOS + uid).delete();
     }
+
+    await firebase.firestore().collection(Constant.collectionName.ACCOUNT_INFO)
+            .doc(uid)
+            .delete();
     
     
     //await signOut();

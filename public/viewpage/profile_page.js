@@ -284,28 +284,25 @@ export async function profile_page() {
             }
         });
     }
-    document.getElementById('delete-profile').addEventListener('click',() => {
-        Elements.warrningMessageForm.innerHTML = '';
-        Elements.warrningMessageForm.innerHTML = 'Are you sure you want to delete your profile?';
-        Elements.modalWarning.show();
+    document.getElementById('delete-profile').addEventListener('click',async () => {
+        if(!window.confirm('Are you sure you want to delete your profile?')) return;
+        
+        
+        
+        try {
+            Util.info('We are sorry to see you leave!','Come back and see us soon!');
+            await FirebaseController.deleteProfile(Auth.currentUser.uid);
+            
+            
+        } catch (e) {
+            if(Constant.DEV) console.log(e)
+            Util.info('Can not delete your profile at this time. Try again later',JSON.stringify(e));
+        }
     });
 
     Elements.warningForm.addEventListener('submit',async e => {
-        e.preventDefault();
-        if(!e.target.submitter){ 
-            Elements.modalWarning.hide();
-            return;
-        }
-        const button = e.target.getElementsByTagName('button')[0];
-        const label = Util.disableButton(button);
-        try {
-            await FirebaseController.deleteProfile(Auth.currentUser.uid);
-            Util.enableButton(button,label);
-            Util.info('We are sorry to see you leave!',Elements.modalWarning);
-        } catch (e) {
-            if(Constant.DEV) console.log(e)
-            Util.info('Can not delete your profile at this time. Try again later',JSON.stringify(e),Elements.modalWarning);
-        }
+        
+        
 
 
     });
